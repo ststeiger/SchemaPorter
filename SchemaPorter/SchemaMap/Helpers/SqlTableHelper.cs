@@ -3,22 +3,10 @@ namespace SchemaPorter
 {
 
 
-    class SqlTable
+    class SqlTableHelper 
     {
-
-        public string Schema;
-        public string Table;
-
-        public System.Collections.Generic.Dictionary<string, SqlColumn> Columns;
-
-
-        public string CreateTableScript()
-        {
-            return null;
-        }
-
-
-
+        
+        
         public static void CreateAll()
         {
 
@@ -56,8 +44,8 @@ namespace SchemaPorter
                             {
                                 // We have a FK Relationship!
                                 System.Console.WriteLine("GO");
-                                System.Console.WriteLine("ALTER TABLE " + table.Table + " WITH NOCHECK");
-                                System.Console.WriteLine("ADD CONSTRAINT FK_" + field.Key + " FOREIGN KEY (" + field.Key + ") REFERENCES " + t2.ClassName + "(ID)");
+                                // System.Console.WriteLine("ALTER TABLE " + table.Table + " WITH NOCHECK");
+                                // System.Console.WriteLine("ADD CONSTRAINT FK_" + field.Key + " FOREIGN KEY (" + field.Key + ") REFERENCES " + t2.ClassName + "(ID)");
                                 System.Console.WriteLine("GO");
 
                             }

@@ -7,7 +7,7 @@ namespace SchemaPorter
     {
 
         public string ColumnName;
-        public int Ordinal;
+        // public int Ordinal; // Irrelevant
         public string Type;
         public bool IsNullable;
         public string ColumnDefault;
@@ -27,6 +27,8 @@ namespace SchemaPorter
 
         public SqlColumn Column(string name)
         {
+            this.ColumnName = name;
+            
             return this;
         }
 
@@ -35,8 +37,8 @@ namespace SchemaPorter
         {
             return this;
         }
-
-
+        
+        
         public SqlColumn Encoding(System.Text.Encoding enc)
         {
             return this;
@@ -65,27 +67,27 @@ namespace SchemaPorter
         {
             return this.Nullable(false);
         }
-
-
+        
+        
         public SqlColumn Default(string name)
         {
             return this;
         }
-
-
+        
+        
         public SqlColumn Computed(bool isNullable)
         {
             return this;
         }
-
-
+        
+        
         public SqlColumn Computed()
         {
             return this.Computed(true);
         }
-
-
+        
+        
     }
-
-
+    
+    
 }
