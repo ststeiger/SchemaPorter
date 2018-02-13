@@ -1,5 +1,6 @@
-SELECT
-I.name,
+
+SELECT 
+	I.name,
 
  ' CREATE ' +
        CASE 
@@ -43,114 +44,122 @@ I.name,
             ELSE ' ALLOW_PAGE_LOCKS = OFF '
        END + ' ) ON [' +
        DS.name + ' ] ' +  CHAR(13) + CHAR(10) + ' GO' [CreateIndexScript]
-FROM   sys.indexes I
-       JOIN sys.tables T
-            ON  T.object_id = I.object_id
-       JOIN sys.sysindexes SI
-            ON  I.object_id = SI.id
-            AND I.index_id = SI.indid
-       JOIN (
-                SELECT *
-                FROM   (
-                           SELECT IC2.object_id,
-                                  IC2.index_id,
-                                  STUFF(
-                                      (
-                                          SELECT ' , ' + C.name + CASE 
-                                                                       WHEN MAX(CONVERT(INT, IC1.is_descending_key)) 
-                                                                            = 1 THEN 
-                                                                            ' DESC '
-                                                                       ELSE 
-                                                                            ' ASC '
-                                                                  END
-                                          FROM   sys.index_columns IC1
-                                                 JOIN sys.columns C
-                                                      ON  C.object_id = IC1.object_id
-                                                      AND C.column_id = IC1.column_id
-                                                      AND IC1.is_included_column = 
-                                                          0
-                                          WHERE  IC1.object_id = IC2.object_id
-                                                 AND IC1.index_id = IC2.index_id
-                                          GROUP BY
-                                                 IC1.object_id,
-                                                 C.name,
-                                                 index_id
-                                          ORDER BY
-                                                 MAX(IC1.key_ordinal) 
-                                                 FOR XML PATH('')
-                                      ),
-                                      1,
-                                      2,
-                                      ''
-                                  ) KeyColumns
-                           FROM   sys.index_columns IC2 
-                                  --WHERE IC2.Object_id = object_id('Person.Address') --Comment for all tables
-                           GROUP BY
-                                  IC2.object_id,
-                                  IC2.index_id
-                       ) tmp3
-            )tmp4
-            ON  I.object_id = tmp4.object_id
-            AND I.Index_id = tmp4.index_id
-       JOIN sys.stats ST
-            ON  ST.object_id = I.object_id
-            AND ST.stats_id = I.index_id
-       JOIN sys.data_spaces DS
-            ON  I.data_space_id = DS.data_space_id
-       JOIN sys.filegroups FG
-            ON  I.data_space_id = FG.data_space_id
-       LEFT JOIN (
-                SELECT *
-                FROM   (
-                           SELECT IC2.object_id,
-                                  IC2.index_id,
-                                  STUFF(
-                                      (
-                                          SELECT ' , ' + C.name
-                                          FROM   sys.index_columns IC1
-                                                 JOIN sys.columns C
-                                                      ON  C.object_id = IC1.object_id
-                                                      AND C.column_id = IC1.column_id
-                                                      AND IC1.is_included_column = 
-                                                          1
-                                          WHERE  IC1.object_id = IC2.object_id
-                                                 AND IC1.index_id = IC2.index_id
-                                          GROUP BY
-                                                 IC1.object_id,
-                                                 C.name,
-                                                 index_id 
-                                                 FOR XML PATH('')
-                                      ),
-                                      1,
-                                      2,
-                                      ''
-                                  ) IncludedColumns
-                           FROM   sys.index_columns IC2 
-                                  --WHERE IC2.Object_id = object_id('Person.Address') --Comment for all tables
-                           GROUP BY
-                                  IC2.object_id,
-                                  IC2.index_id
-                       ) tmp1
-                WHERE  IncludedColumns IS NOT NULL
-            ) tmp2
-            ON  tmp2.object_id = I.object_id
-            AND tmp2.index_id = I.index_id
-WHERE  I.is_primary_key = 0
-       AND I.is_unique_constraint = 0
-           --AND I.Object_id = object_id('Person.Address') --Comment for all tables
-           --AND I.name = 'IX_Address_PostalCode' --comment for all indexes 
-AND I.name = 'IX_UC_T_SYS_Ref_Layerset__LY_Status_LY_Stylizer_Must_Be_Unique_for_T_SYS_Ref_Layerset_Felder'
+FROM sys.indexes AS I
 
- CREATE  UNIQUE NONCLUSTERED INDEX 
- IX_UC_T_SYS_Ref_Layerset__LY_Status_LY_Stylizer
- _Must_Be_Unique_for_T_SYS_Ref_Layerset_Felder 
- ON dbo.T_SYS_Ref_Layerset (  LY_Stylizer ASC  )   
- WHERE  ([T_SYS_Ref_Layerset].[LY_Stylizer] IS NOT NULL 
- AND [T_SYS_Ref_Layerset].[LY_Stylizer]<>'' 
- AND [T_SYS_Ref_Layerset].[LY_Status]=(1) 
- AND ([LY_Legende_View] IS NOT NULL 
- AND [LY_Legende_View]<>'')) 
- WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF 
- , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF 
- , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  ) 
- ON [PRIMARY ]  GO
+INNER JOIN sys.tables AS T
+    ON  T.object_id = I.object_id
+
+INNER JOIN sys.sysindexes AS SI
+    ON  I.object_id = SI.id
+    AND I.index_id = SI.indid
+
+INNER JOIN 
+	(
+		SELECT *
+		FROM   
+		(
+			SELECT 
+				IC2.object_id,
+				IC2.index_id,
+				STUFF
+				(
+					(
+						SELECT ' , ' + C.name + CASE 
+													WHEN MAX(CONVERT(INT, IC1.is_descending_key)) 
+														= 1 THEN 
+														' DESC '
+													ELSE 
+														' ASC '
+												END
+						FROM sys.index_columns AS IC1 
+
+						INNER JOIN sys.columns AS C
+							ON  C.object_id = IC1.object_id
+							AND C.column_id = IC1.column_id
+							AND IC1.is_included_column = 0
+
+						WHERE  IC1.object_id = IC2.object_id
+						AND IC1.index_id = IC2.index_id
+
+						GROUP BY
+							IC1.object_id,
+							C.name,
+							index_id
+						ORDER BY
+							MAX(IC1.key_ordinal) 
+							FOR XML PATH('')
+					),
+					1,
+					2,
+					'' 
+				) KeyColumns
+			FROM sys.index_columns AS IC2 
+			-- WHERE IC2.Object_id = object_id('Person.Address') --Comment for all tables
+			GROUP BY
+				IC2.object_id,
+				IC2.index_id
+		) AS tmp3
+    ) AS tmp4
+    ON I.object_id = tmp4.object_id
+    AND I.Index_id = tmp4.index_id
+
+INNER JOIN sys.stats AS ST
+    ON ST.object_id = I.object_id
+    AND ST.stats_id = I.index_id
+
+INNER JOIN sys.data_spaces AS DS
+    ON I.data_space_id = DS.data_space_id
+
+INNER JOIN sys.filegroups AS FG
+    ON I.data_space_id = FG.data_space_id
+
+LEFT JOIN 
+	(
+        SELECT *
+        FROM   
+		(
+			SELECT 
+				IC2.object_id,
+				IC2.index_id,
+				STUFF
+				(
+					(
+						SELECT 
+							' , ' + C.name 
+						FROM sys.index_columns AS IC1 
+						INNER JOIN sys.columns AS C 
+							ON C.object_id = IC1.object_id 
+							AND C.column_id = IC1.column_id 
+							AND IC1.is_included_column = 1 
+
+						WHERE IC1.object_id = IC2.object_id 
+						AND IC1.index_id = IC2.index_id 
+
+						GROUP BY
+								 IC1.object_id 
+								,C.name 
+								,index_id 
+						FOR XML PATH('') 
+					),
+					1,
+					2,
+					''
+				) AS IncludedColumns 
+			FROM sys.index_columns AS IC2 
+			-- WHERE IC2.Object_id = object_id('Person.Address') --Comment for all tables
+			GROUP BY
+					IC2.object_id,
+					IC2.index_id
+		) AS tmp1 
+        WHERE IncludedColumns IS NOT NULL 
+    ) AS tmp2 
+    ON tmp2.object_id = I.object_id
+    AND tmp2.index_id = I.index_id
+WHERE (1=1) 
+AND I.is_primary_key = 0
+AND I.is_unique_constraint = 0
+
+--AND I.Object_id = object_id('Person.Address') --Comment for all tables
+--AND I.name = 'IX_Address_PostalCode' --comment for all indexes  
+
+AND I.name = 'IX_UC_T_SYS_Ref_Layerset__LY_Status_LY_Stylizer_Must_Be_Unique_for_T_SYS_Ref_Layerset_Felder'
