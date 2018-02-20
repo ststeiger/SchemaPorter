@@ -16,7 +16,7 @@ namespace SchemaPorter.YamlSpace
 
             Newtonsoft.Json.JsonSerializer ser = new Newtonsoft.Json.JsonSerializer();
 
-            using (System.IO.FileStream fs = System.IO.File.OpenRead(@"d:\username\Documents\Visual Studio 2017\Projects\BlueMine\BlueMine\Code\de.json"))
+            using (System.IO.FileStream fs = System.IO.File.OpenRead(@"d:\username\Documents\Visual Studio 2017\Projects\BlueMine\BlueMine\Code\EN.json"))
             {
                 // using (System.IO.TextReader sr = new System.IO.StringReader(@""))
                 using (System.IO.TextReader sr = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8))
@@ -53,7 +53,7 @@ namespace SchemaPorter.YamlSpace
                         continue;
 
                     string pname = pi.Name;
-                    string value = (string)pi.GetValue(retVal.de, null);
+                    string value = (string)pi.GetValue(retVal.en, null);
 
                     System.Console.WriteLine($"Name: {pname}, Value: {value}");
 

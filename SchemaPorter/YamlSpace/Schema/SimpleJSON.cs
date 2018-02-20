@@ -1334,6 +1334,7 @@ namespace SchemaPorter.SimpleYamlSchema
     public class RootObject
     {
         public DE de { get; set; }
+        public DE en { get; set; }
     }
 
 

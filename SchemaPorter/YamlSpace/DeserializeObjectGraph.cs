@@ -1,8 +1,4 @@
 ﻿
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
-
-
 namespace SchemaPorter.YamlSpace
 {
 
@@ -15,7 +11,7 @@ namespace SchemaPorter.YamlSpace
         [YamlDotNet.Serialization.YamlMember(Alias = "bill-to")]
         public string BillTo { get; set; }
 
-    }
+    } // End Class Order 
 
 
     public class DeserializeObjectGraph
@@ -28,32 +24,30 @@ namespace SchemaPorter.YamlSpace
             // SchemaPorter.foofoo.RootNode retVal = null;
             SchemaPorter.SimpleYamlSchema.RootObject retVal = null;
 
-            // var r = new StringReader("Document");
-
-            // Deserializer deserializer = new Deserializer(namingConvention: new CamelCaseNamingConvention());
-
-            Deserializer deserializer = new DeserializerBuilder()
-                .WithNamingConvention(new CamelCaseNamingConvention())
+            YamlDotNet.Serialization.Deserializer deserializer = 
+                new YamlDotNet.Serialization.DeserializerBuilder()
+                .WithNamingConvention(new YamlDotNet.Serialization.NamingConventions.CamelCaseNamingConvention())
                 //.IgnoreUnmatchedProperties()
                 .Build();
             
 
-            using (System.IO.FileStream fs = System.IO.File.OpenRead(@"d:\username\Documents\Visual Studio 2017\Projects\BlueMine\BlueMine\Code\de.yml"))
+            using (System.IO.Stream fs = System.IO.File.OpenRead(@"d:\username\Documents\Visual Studio 2017\Projects\BlueMine\BlueMine\Code\de.yml"))
             {
-                //using (var r = new StringReader(@""))
-                using (var r = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8))
+                //using (System.IO.TextReader r = new System.IO.StringReader(@""))
+                using (System.IO.TextReader r = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8))
                 {
                     // retVal = deserializer.Deserialize<SchemaPorter.YamlSpace.RootNode>(r);
                     // retVal = deserializer.Deserialize<SchemaPorter.foofoo.RootNode>(r);
                     retVal = deserializer.Deserialize<SchemaPorter.SimpleYamlSchema.RootObject>(r);
-                }
-            }
+                } // End using r 
 
+            } // End Using fs 
 
             System.Console.WriteLine(retVal);
-        }
-
-    }
+        } // End Sub Test 
 
 
-}
+    } // End Class DeserializeObjectGraph 
+
+
+} // End Namespace SchemaPorter.YamlSpace 
