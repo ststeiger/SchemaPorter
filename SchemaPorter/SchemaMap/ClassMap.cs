@@ -92,6 +92,10 @@ namespace SchemaPorter
         public System.Collections.Generic.List<ColumnReference> FieldList<TTable>
             (params Expression<System.Func<TTable, object>>[] memberExpressions)
         {
+            
+            // // Func<TEntity, T> func = propertyExpression.Compile();
+            // System.Func<TTable, object> func = memberExpressions[0].Compile();
+            
             return null;
         }
 
