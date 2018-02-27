@@ -36,13 +36,19 @@ namespace SchemaPorter
         public static string GetConnectionString()
         {
             System.Data.SqlClient.SqlConnectionStringBuilder csb = new System.Data.SqlClient.SqlConnectionStringBuilder();
-            
-            csb.DataSource = SchemaPorter.SecretManager.GetSecret<string>("DataSource");
+
+            string asm = "BlueMine";
+
+            csb.DataSource = SchemaPorter.SecretManager.GetSecret<string>("DataSource", asm);
             csb.InitialCatalog = "BlueMine";
-            
-            csb.UserID = SchemaPorter.SecretManager.GetSecret<string>("DefaultDbUser");
-            csb.Password = SchemaPorter.SecretManager.GetSecret<string>("DefaultDbPassword");
-            
+            csb.InitialCatalog = "Redmine";
+
+            // csb.UserID = SchemaPorter.SecretManager.GetSecret<string>("DefaultDbUser");
+            // csb.Password = SchemaPorter.SecretManager.GetSecret<string>("DefaultDbPassword");
+
+            csb.UserID = SchemaPorter.SecretManager.GetSecret<string>("DefaultDbUser", asm);
+            csb.Password = SchemaPorter.SecretManager.GetSecret<string>("DefaultDbPassword", asm);
+
             csb.PacketSize = 4096;
             csb.PersistSecurityInfo = false;
             csb.ApplicationName = "BlueMine";

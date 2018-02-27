@@ -7,6 +7,18 @@
     <Compile Remove="YamlSpace\Schema\Working.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="SQL\classes.sql" />
+    <None Remove="SQL\columns.sql" />
+    <None Remove="SQL\indices.sql" />
+    <None Remove="SQL\primary_keys.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SQL\columns.sql" />
+    <EmbeddedResource Include="SQL\indices.sql" />
+    <EmbeddedResource Include="SQL\primary_keys.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.6.1" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="Npgsql" Version="3.2.6" />
@@ -14,4 +26,5 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.4.2" />
     <PackageReference Include="YamlDotNet.NetCore" Version="1.0.0" />
   </ItemGroup>
+  <Import Project="..\Dapper\Dapper.projitems" Label="Shared" />
 </Project>
