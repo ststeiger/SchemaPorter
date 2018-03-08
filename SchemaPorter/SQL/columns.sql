@@ -32,7 +32,9 @@ SELECT
 		WHEN DATA_TYPE = 'datetime' THEN 'System.DateTime' 
 		WHEN DATA_TYPE = 'datetime2' THEN 'System.DateTime' 
 		WHEN DATA_TYPE = 'date' THEN 'System.DateTime' 
-		WHEN DATA_TYPE = 'float' THEN 'System.Decimal' 
+		--WHEN DATA_TYPE = 'float' THEN 'System.Decimal' -- Nono, entity doesn't like that...
+		WHEN DATA_TYPE = 'float' THEN 'double' 
+		WHEN DATA_TYPE = 'decimal' THEN 'System.Decimal' 
 		WHEN DATA_TYPE = 'varbinary' THEN 'byte[]' 
 		ELSE 'unknown' 
 	END 

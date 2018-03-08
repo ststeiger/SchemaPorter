@@ -15,7 +15,7 @@ namespace SchemaPorter
             // YamlSpace.DeserializeObjectGraph.Test();
 
 
-            // SchemaGenerator.GenerateSchema();
+            SchemaGenerator.GenerateSchema();
             // ContextGenerator.GenerateContext();
 
             SomeTableMap xm = new SomeTableMap();
