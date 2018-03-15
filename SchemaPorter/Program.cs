@@ -14,11 +14,13 @@ namespace SchemaPorter
 
             // YamlSpace.DeserializeObjectGraph.Test();
 
+            TestSMO.Test();
 
-            SchemaGenerator.GenerateSchema();
+
+            // SchemaGenerator.GenerateSchema();
             // ContextGenerator.GenerateContext();
 
-            SomeTableMap xm = new SomeTableMap();
+            // SomeTableMap xm = new SomeTableMap();
 
             System.Console.WriteLine(System.Environment.NewLine);
             System.Console.WriteLine(" --- Press any key to continue --- ");
