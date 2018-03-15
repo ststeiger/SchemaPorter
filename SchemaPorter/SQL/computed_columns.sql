@@ -87,3 +87,30 @@ INNER JOIN sys.computed_columns AS col
   --INNER JOIN sys.objects AS obj ON col.object_id = obj.object_id
 
 WHERE sc.is_computed = 1
+
+
+-- ------------------------------------------------------------------
+
+
+
+
+SELECT 
+     sch.name AS schema_name 
+    ,tables.name AS table_name 
+    ,sc.name AS column_name 
+    ,sc.collation_name AS collation_name 
+    ,sc.is_computed 
+    ,col.[definition] AS computation_definition 
+    ,col.is_persisted
+    ,sc.is_identity 
+    ,sc.is_filestream 
+    ,sc.is_nullable
+    
+
+    -- ,*
+FROM sys.columns AS sc 
+INNER JOIN sys.tables AS tables ON sc.object_id = tables.object_id 
+INNER JOIN sys.schemas AS sch ON sch.schema_id = tables.schema_id
+INNER JOIN sys.computed_columns AS col ON col.object_id = sc.object_id
+
+WHERE sc.name = '_BE_Label' 
