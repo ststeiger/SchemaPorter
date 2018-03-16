@@ -8,18 +8,43 @@ using Microsoft.SqlServer.Management.Smo.SqlEnum;
 
 
 // nuget: Microsoft.SqlServer.SqlManagementObjects
+// https://stackoverflow.com/questions/11656324/how-can-i-generate-create-table-script-from-code
+
 // https://docs.microsoft.com/en-us/sql/relational-databases/server-management-objects-smo/smo-license-terms
 // https://www.mssqltips.com/sqlservertip/1826/getting-started-with-sql-server-management-objects-smo/
-// https://stackoverflow.com/questions/11656324/how-can-i-generate-create-table-script-from-code
+// https://www.mssqltips.com/sqlservertip/1833/generate-scripts-for-database-objects-with-smo-for-sql-server/
+// https://support.microsoft.com/en-us/help/914288/how-to-generate-a-script-of-the-necessary-database-metadata-to-create
+
+// https://stackoverflow.com/questions/2750278/sql-server-2008-create-database-script-schema-data-with-command-line
+// https://blogs.technet.microsoft.com/dataplatforminsider/2017/05/17/try-new-sql-server-command-line-tools-to-generate-t-sql-scripts-and-monitor-dynamic-management-views/
 
 namespace SchemaPorter
 {
 
 
-    class TestSMO
+    public class TestSMO
     {
-        
-        
+
+        public class foo
+        {
+            public foo(params int[] u)
+            { }
+
+            System.Collections.Generic.Dictionary<string, int> dict = 
+                new System.Collections.Generic.Dictionary<string, int>(
+                    System.StringComparer.OrdinalIgnoreCase
+                    );
+
+
+            public string this[string a]
+            {
+                get { return ""; }
+                set { }
+            }
+
+        }
+
+
         public static void Test()
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -105,16 +130,17 @@ namespace SchemaPorter
                 {
                     sb.Append(str);
                     sb.Append(System.Environment.NewLine);
-                }
+                } // Next str 
 
-            }
+            } // Next tbl 
 
             System.IO.StreamWriter fs = System.IO.File.CreateText("c:\\temp\\output.txt");
             fs.Write(sb.ToString());
             fs.Close();
-        }
-
-    }
+        } // End Sub SlightlyMoreComplete 
 
 
-}
+    } //End Class TestSMO 
+
+
+} // End Namespace SchemaPorter
