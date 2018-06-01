@@ -1,14 +1,15 @@
 ﻿
 namespace SchemaPorter
 {
-
-
-    class Program
+    
+    
+    public static class Program
     {
-
-
+        
+        
         public static void Main(string[] args)
         {
+            
             // YamlSpace.Yaml2JSON.Test();
             // YamlSpace.DeserializeJSON.Test();
 
