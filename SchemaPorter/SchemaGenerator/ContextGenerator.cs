@@ -7,6 +7,7 @@ using System.Collections.Generic;
 namespace SchemaPorter
 {
 
+
     public class TableDefinitions
     {
         public string TABLE_CATALOG;
@@ -14,6 +15,7 @@ namespace SchemaPorter
         public string TABLE_NAME;
         public string TABLE_TYPE;
     }
+
 
     public class IndexDefinition
     {
@@ -210,6 +212,10 @@ namespace "+ ns + @"
                     entity.Property(e => e.";
 
 
+                    if (!Microsoft.CodeAnalysis.CSharp.SyntaxFacts.IsValidIdentifier(columnInfo[j].COLUMN_NAME))
+                    {
+                        System.Console.WriteLine($@" ""{allTables[i].TABLE_NAME}"".""{columnInfo[j].COLUMN_NAME}"" is not a valid identifier.");
+                    }
 
                     if (Microsoft.CodeAnalysis.CSharp.SyntaxFacts.IsReservedKeyword(
                         Microsoft.CodeAnalysis.CSharp.SyntaxFacts.GetKeywordKind(columnInfo[j].COLUMN_NAME)
@@ -271,5 +277,8 @@ namespace "+ ns + @"
             System.IO.File.WriteAllText("SomeContext.cs", cs, System.Text.Encoding.UTF8);
         }
 
+
     }
+
+
 }
