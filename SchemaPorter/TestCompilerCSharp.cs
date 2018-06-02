@@ -1,5 +1,6 @@
 ﻿
 using System.Linq;
+using System.Net.NetworkInformation;
 
 
 namespace SchemaPorter
@@ -43,8 +44,9 @@ namespace SchemaPorter
                     {
                         public static void Main()
                         {
-                            System.Console.Write(A.Print()); 
-                            System.Console.WriteLine(B.Print());
+                            System.Console.WriteLine(""Ni hao !"");
+                            // System.Console.Write(A.Print()); 
+                            // System.Console.WriteLine(B.Print());
                         }
                     }";
 
@@ -147,13 +149,11 @@ namespace SchemaPorter
 
 
                 #endregion main program compilation into the assembly
-
-
-                // assembly.LoadModule("System.Runtime", System.IO.File.ReadAllBytes(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location));
-
+                
+                // .NET Core doesn't support modules... (by design)
                 // load the A.netmodule and B.netmodule into the assembly.
-                assembly.LoadModule("A.netmodule", compilationAResult);
-                assembly.LoadModule("B.netmodule", compilationBResult);
+                // assembly.LoadModule("A.netmodule", compilationAResult);
+                // assembly.LoadModule("B.netmodule", compilationBResult);
 
                 #region Test the program
 

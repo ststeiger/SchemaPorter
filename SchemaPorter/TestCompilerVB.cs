@@ -1,5 +1,6 @@
 ﻿
 using System.Linq;
+using Microsoft.SqlServer.Management.Smo;
 
 
 namespace SchemaPorter
@@ -49,8 +50,9 @@ End Class
 
 Public Class Program
     Public Shared Sub Main()
-        System.Console.Write(A.Print())
-        System.Console.WriteLine(B.Print())
+        ' System.Console.Write(A.Print())
+        ' System.Console.WriteLine(B.Print())
+        System.Console.WriteLine(""Privet mir"")
     End Sub
 End Class
 
@@ -139,9 +141,11 @@ End Class
 
                 #endregion main program compilation into the assembly
 
+                
+                // .NET Core doesn't support modules... (by design)
                 // load the A.netmodule and B.netmodule into the assembly.
-                assembly.LoadModule("A.netmodule", compilationAResult);
-                assembly.LoadModule("B.netmodule", compilationBResult);
+                // assembly.LoadModule("A.netmodule", compilationAResult);
+                // assembly.LoadModule("B.netmodule", compilationBResult);
 
                 #region Test the program
 

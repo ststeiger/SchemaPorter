@@ -17,7 +17,7 @@ namespace SchemaPorter
             System.Console.WriteLine("hello");
 
             TestCompilerCSharp.Test();
-            // TestCompilerVB.Test();
+            TestCompilerVB.Test();
 
             // TestSMO.Test();
 
