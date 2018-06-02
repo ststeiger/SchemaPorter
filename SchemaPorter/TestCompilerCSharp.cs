@@ -103,6 +103,15 @@ namespace SchemaPorter
 
                 #region main program compilation into the assembly
 
+                
+
+                // var met = Microsoft.CodeAnalysis.AssemblyMetadata.CreateFromFile(typeof(System.Console).Assembly.Location);
+                Microsoft.CodeAnalysis.MetadataReference sysCorlib = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+                Microsoft.CodeAnalysis.MetadataReference sysConsole = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(System.Console).Assembly.Location);
+                Microsoft.CodeAnalysis.MetadataReference sysRuntime = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location);
+                // Microsoft.CodeAnalysis.MetadataReference sysRuntimeLoader = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(System.Runtime.Loader.AssemblyLoadContext).Assembly.Location);
+                // Microsoft.CodeAnalysis.MetadataReference sysAssembly = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(System.Reflection.Assembly).Assembly.Location);
+
                 // create the Roslyn compilation for the main program with
                 // ConsoleApplication compilation options
                 // adding references to A.netmodule and B.netmodule
@@ -113,17 +122,34 @@ namespace SchemaPorter
                         mainProgramString,
                         // note that here we pass the OutputKind set to ConsoleApplication
                         compilerOptions: new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(
-                            Microsoft.CodeAnalysis.OutputKind.ConsoleApplication),
-                        references: new[] {referenceA, referenceB}
+                            Microsoft.CodeAnalysis.OutputKind.ConsoleApplication
+                            ),
+                        references: new[] { sysRuntime, sysCorlib, sysConsole,  referenceA, referenceB }
                     );
+
+
+
+                
+
+
+
+
+                //.WithOptions(new CSharpCompilationOptions(Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary))
 
                 // Emit the byte result of the compilation
                 byte[] result = mainCompilation.EmitToArray();
 
                 // Load the resulting assembly into the domain. 
                 System.Reflection.Assembly assembly = System.Reflection.Assembly.Load(result);
+                // System.Type t = assembly.GetType("Program");
+                // System.Reflection.MethodInfo mainMethod = t.GetMethod("Main");
+                // mainMethod.Invoke(null, null);
+
 
                 #endregion main program compilation into the assembly
+
+
+                // assembly.LoadModule("System.Runtime", System.IO.File.ReadAllBytes(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location));
 
                 // load the A.netmodule and B.netmodule into the assembly.
                 assembly.LoadModule("A.netmodule", compilationAResult);

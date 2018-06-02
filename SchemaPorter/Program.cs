@@ -14,7 +14,7 @@ namespace SchemaPorter
             // YamlSpace.DeserializeJSON.Test();
 
             // YamlSpace.DeserializeObjectGraph.Test();
-
+            System.Console.WriteLine("hello");
 
             TestCompilerCSharp.Test();
             TestCompilerVB.Test();
