@@ -1,6 +1,6 @@
 ﻿
-using System.Configuration;
-using System.Collections.Specialized;
+// using System.Configuration;
+// using System.Collections.Specialized;
 
 
 using Microsoft.SqlServer.Management.Smo;
@@ -61,8 +61,8 @@ namespace SchemaPorter
                 {
                     sc.Connect();
 
-                    Server server = new Server(sc);
-                    Database database; // = new Database();
+                    Microsoft.SqlServer.Management.Smo.Server server = new Microsoft.SqlServer.Management.Smo.Server(sc);
+                    Microsoft.SqlServer.Management.Smo.Database database; // = new Microsoft.SqlServer.Management.Smo.Database();
                     //database = server.Databases["redmine"];
                     //string schemaName = @"dbo";
                     //string tableName = @"issues";
@@ -72,8 +72,15 @@ namespace SchemaPorter
                     string tableName = @"T_Benutzer";
 
 
-                    Table table = database.Tables[tableName, schemaName];
-                    StringCollection result = table.Script();
+                    Microsoft.SqlServer.Management.Smo.Table table = database.Tables[tableName, schemaName];
+                    System.Collections.Specialized.StringCollection result = table.Script();
+
+
+                    // table.Script(new ScriptingOptions() { ScriptForAlter = true });
+
+                    Microsoft.SqlServer.Management.Smo.StoredProcedure proc = database.StoredProcedures["procname", "schema"];
+                    // proc.Script(new ScriptingOptions() { ScriptForAlter = true });
+                    // string alterText = proc.ScriptHeader(true) + proc.TextBody;
 
                     foreach (string line in result)
                     {
@@ -102,7 +109,7 @@ namespace SchemaPorter
 
         public static void SlightlyMoreComplete()
         {
-            Server srv = new Server();
+            Microsoft.SqlServer.Management.Smo.Server srv = new Microsoft.SqlServer.Management.Smo.Server();
 
             // really you would get these from config or elsewhere:
             srv.ConnectionContext.Login = "foo";
@@ -111,21 +118,21 @@ namespace SchemaPorter
             srv.ConnectionContext.ServerInstance = "ServerName";
             string dbName = "DatabaseName";
 
-            Database db = new Database();
+            Microsoft.SqlServer.Management.Smo.Database db = new Microsoft.SqlServer.Management.Smo.Database();
             db = srv.Databases[dbName];
 
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-            foreach (Table tbl in db.Tables)
+            foreach (Microsoft.SqlServer.Management.Smo.Table tbl in db.Tables)
             {
-                ScriptingOptions options = new ScriptingOptions();
+                Microsoft.SqlServer.Management.Smo.ScriptingOptions options = new Microsoft.SqlServer.Management.Smo.ScriptingOptions();
                 options.ClusteredIndexes = true;
                 options.Default = true;
                 options.DriAll = true;
                 options.Indexes = true;
                 options.IncludeHeaders = true;
 
-                StringCollection coll = tbl.Script(options);
+                System.Collections.Specialized.StringCollection coll = tbl.Script(options);
                 foreach (string str in coll)
                 {
                     sb.Append(str);

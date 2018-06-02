@@ -15,7 +15,7 @@ namespace SchemaPorter
             try
             {
                 // code for class A
-                var classAString =
+                string classAString =
                     @"public class A 
                     {
                         public static string Print() 
@@ -27,7 +27,7 @@ namespace SchemaPorter
                 // code for class B (to spice it up, it is a 
                 // subclass of A even though it is almost not needed
                 // for the demonstration)
-                var classBString =
+                string classBString =
                     @"public class B : A
                     {
                         public static string Print()
@@ -38,7 +38,7 @@ namespace SchemaPorter
 
                 // the main class Program contain static void Main() 
                 // that calls A.Print() and B.Print() methods
-                var mainProgramString =
+                string mainProgramString =
                     @"public class Program
                     {
                         public static void Main()
@@ -51,7 +51,7 @@ namespace SchemaPorter
                 #region class A compilation into A.netmodule
 
                 // create Roslyn compilation for class A
-                var compilationA =
+                Microsoft.CodeAnalysis.CSharp.CSharpCompilation compilationA =
                     CreateCompilationWithMscorlib
                     (
                         "A",
@@ -76,7 +76,7 @@ namespace SchemaPorter
                 #region class B compilation into B.netmodule
 
                 // create Roslyn compilation for class A
-                var compilationB =
+                Microsoft.CodeAnalysis.CSharp.CSharpCompilation compilationB =
                     CreateCompilationWithMscorlib
                     (
                         "B",
@@ -106,7 +106,7 @@ namespace SchemaPorter
                 // create the Roslyn compilation for the main program with
                 // ConsoleApplication compilation options
                 // adding references to A.netmodule and B.netmodule
-                var mainCompilation =
+                Microsoft.CodeAnalysis.CSharp.CSharpCompilation mainCompilation =
                     CreateCompilationWithMscorlib
                     (
                         "program",
@@ -166,7 +166,7 @@ namespace SchemaPorter
             using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
             {
                 // emit result into a stream
-                var emitResult = compilation.Emit(stream);
+                Microsoft.CodeAnalysis.Emit.EmitResult emitResult = compilation.Emit(stream);
 
                 if (!emitResult.Success)
                 {

@@ -15,7 +15,7 @@ namespace SchemaPorter
             try
             {
                 // code for class A
-                var classAString =
+                string classAString =
                     @"
 
 Public Class A
@@ -29,7 +29,7 @@ End Class
                 // code for class B (to spice it up, it is a 
                 // subclass of A even though it is almost not needed
                 // for the demonstration)
-                var classBString =
+                string classBString =
                     @"
 
 Public Class B
@@ -44,7 +44,7 @@ End Class
 
                 // the main class Program contain static void Main() 
                 // that calls A.Print() and B.Print() methods
-                var mainProgramString =
+                string mainProgramString =
                     @"
 
 Public Class Program
@@ -59,7 +59,7 @@ End Class
                 #region class A compilation into A.netmodule
 
                 // create Roslyn compilation for class A
-                var compilationA =
+                Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilation compilationA =
                     CreateCompilationWithMscorlib
                     (
                         "A",
@@ -84,7 +84,7 @@ End Class
                 #region class B compilation into B.netmodule
 
                 // create Roslyn compilation for class A
-                var compilationB =
+                Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilation compilationB =
                     CreateCompilationWithMscorlib
                     (
                         "B",
@@ -114,7 +114,7 @@ End Class
                 // create the Roslyn compilation for the main program with
                 // ConsoleApplication compilation options
                 // adding references to A.netmodule and B.netmodule
-                var mainCompilation =
+                Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilation mainCompilation =
                     CreateCompilationWithMscorlib
                     (
                         "program",
@@ -174,7 +174,7 @@ End Class
             using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
             {
                 // emit result into a stream
-                var emitResult = compilation.Emit(stream);
+                Microsoft.CodeAnalysis.Emit.EmitResult emitResult = compilation.Emit(stream);
 
                 if (!emitResult.Success)
                 {

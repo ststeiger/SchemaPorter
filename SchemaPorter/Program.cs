@@ -9,13 +9,17 @@ namespace SchemaPorter
         
         public static void Main(string[] args)
         {
-            
+
             // YamlSpace.Yaml2JSON.Test();
             // YamlSpace.DeserializeJSON.Test();
 
             // YamlSpace.DeserializeObjectGraph.Test();
 
-            TestSMO.Test();
+
+            TestCompilerCSharp.Test();
+            TestCompilerVB.Test();
+
+            // TestSMO.Test();
 
 
             // SchemaGenerator.GenerateSchema();
