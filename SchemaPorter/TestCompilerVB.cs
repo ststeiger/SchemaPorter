@@ -111,6 +111,12 @@ End Class
 
                 #region main program compilation into the assembly
 
+
+                Microsoft.CodeAnalysis.MetadataReference sysCorlib = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+                Microsoft.CodeAnalysis.MetadataReference sysConsole = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(System.Console).Assembly.Location);
+                Microsoft.CodeAnalysis.MetadataReference sysRuntime = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location);
+
+
                 // create the Roslyn compilation for the main program with
                 // ConsoleApplication compilation options
                 // adding references to A.netmodule and B.netmodule
@@ -122,7 +128,7 @@ End Class
                         // note that here we pass the OutputKind set to ConsoleApplication
                         compilerOptions: new Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilationOptions(
                             Microsoft.CodeAnalysis.OutputKind.ConsoleApplication),
-                        references: new[] {referenceA, referenceB}
+                        references: new[] { sysCorlib, sysConsole, sysRuntime, referenceA, referenceB }
                     );
                 
                 // Emit the byte result of the compilation
