@@ -1,6 +1,5 @@
 ﻿
 using System.Linq;
-using System.Net.NetworkInformation;
 
 
 namespace SchemaPorter

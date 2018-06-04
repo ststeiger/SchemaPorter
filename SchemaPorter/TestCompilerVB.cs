@@ -1,6 +1,5 @@
 ﻿
 using System.Linq;
-using Microsoft.SqlServer.Management.Smo;
 
 
 namespace SchemaPorter
