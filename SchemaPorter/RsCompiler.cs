@@ -170,11 +170,24 @@ End Class ' RsEval
 
 Public Class Program
     Public Shared Sub Main()
-        Dim x As New ParameterStore()
-        x.Add(New ReportParameter( ""Vermessungsbezirk"", ""00000000-0000-0000-0000-000000000000"") )
-        x.Add(New ReportParameter( ""Kreis"", ""00000000-0000-0000-0000-000000000000"") )
-        x.Add(New ReportParameter( ""Gemeinde"", ""00000000-0000-0000-0000-000000000000"") )
-        Dim str As String = RsEval.ExecuteParameter(x) 
+        Dim par As New ParameterStore()
+        par.Add(New ReportParameter( ""schulkreis"", ""00000000-0000-0000-0000-000000000000"") )
+        par.Add(New ReportParameter( ""stadtkreis"", ""00000000-0000-0000-0000-000000000000"") )
+        par.Add(New ReportParameter( ""schuleinheit"", ""00000000-0000-0000-0000-000000000000"") )
+
+        par.Add(New ReportParameter( ""portfolio1"", ""00000000-0000-0000-0000-000000000000"") )
+        par.Add(New ReportParameter( ""subportfolio1"", ""00000000-0000-0000-0000-000000000000"") )
+        par.Add(New ReportParameter( ""denkmalschutz"", ""00000000-0000-0000-0000-000000000000"") )
+        par.Add(New ReportParameter( ""kontakt"", ""00000000-0000-0000-0000-000000000000"") )
+
+
+        par.Add(New ReportParameter( ""Vermessungsbezirk"", ""00000000-0000-0000-0000-000000000000"") )
+        par.Add(New ReportParameter( ""Kreis"", ""00000000-0000-0000-0000-000000000000"") )
+        par.Add(New ReportParameter( ""Gemeinde"", ""00000000-0000-0000-0000-000000000000"") )
+        Dim str As String = RsEval.ExecuteParameter(par) 
+        str = RsEval.Gebäude(par) 
+        str = RsEval.SelVB(par) 
+
         System.Console.WriteLine(str)
     End Sub
 End Class
