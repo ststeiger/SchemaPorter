@@ -145,6 +145,11 @@ IIF(Parameters!kontakt.Value = ""00000000-0000-0000-0000-000000000000"", """", "
         Return str
     End Function
 
+    Public Shared Function ExecuteDate() As Object
+        Return DateAdd(""D""c, -1, DateAdd(""M""c, 1, new DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, 1))).ToString(""dd.MM.yyyy"")
+    End Function
+
+
             ' https://stackoverflow.com/questions/6841275/what-does-this-mean-in-the-specific-line-of-code
     Public Shared Function ExecuteParameter(Parameters As ParameterStore) As String
         Dim str As String = ""SELECT 2 AS ID, 2 AS Sort, 'Alle' AS Name "" &
@@ -187,8 +192,10 @@ Public Class Program
         Dim str As String = RsEval.ExecuteParameter(par) 
         str = RsEval.Gebäude(par) 
         str = RsEval.SelVB(par) 
+        Dim obj As Object = RsEval.ExecuteDate();
+        System.Console.WriteLine(obj)        
 
-        System.Console.WriteLine(str)
+        ' System.Console.WriteLine(str)
     End Sub
 End Class
 
@@ -220,7 +227,8 @@ End Class
 
                 // Load the resulting assembly into the domain. 
                 System.Reflection.Assembly assembly = System.Reflection.Assembly.Load(result);
-
+                
+                
                 
                 // here we get the Program type and 
                 // call its static method Main()
@@ -311,7 +319,7 @@ End Class
             {
                 allReferences = allReferences.Concat(references);
             }
-
+            
             // create and return the compilation
             Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilation compilation =
                 Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilation.Create
