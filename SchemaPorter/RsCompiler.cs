@@ -19,6 +19,10 @@ namespace SchemaPorter
                 // that calls A.Print() and B.Print() methods
                 string mainProgramString =
                     @"
+Option Strict Off
+Option Explicit Off
+Option Infer On
+
 Public Class ReportParameter
     Public Key As String
     Public Label As String
@@ -145,9 +149,9 @@ IIF(Parameters!kontakt.Value = ""00000000-0000-0000-0000-000000000000"", """", "
         Return str
     End Function
 
-    Public Shared Function ExecuteDate() As Object
-        Return DateAdd(""D""c, -1, DateAdd(""M""c, 1, new DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, 1))).ToString(""dd.MM.yyyy"")
-    End Function
+    'Public Shared Function ExecuteDate() As Object
+    '    Return DateAdd(""D""c, -1, DateAdd(""M""c, 1, new DateTime(System.DateTime.Now.Year, System.DateTime.Now.Month, 1))).ToString(""dd.MM.yyyy"")
+    'End Function
 
 
             ' https://stackoverflow.com/questions/6841275/what-does-this-mean-in-the-specific-line-of-code
@@ -174,6 +178,15 @@ End Class ' RsEval
 
 
 Public Class Program
+    
+
+    Public Shared Function Test() As String
+        Return ""test"" & 5 
+    End Function
+
+
+
+
     Public Shared Sub Main()
         Dim par As New ParameterStore()
         par.Add(New ReportParameter( ""schulkreis"", ""00000000-0000-0000-0000-000000000000"") )
@@ -192,10 +205,10 @@ Public Class Program
         Dim str As String = RsEval.ExecuteParameter(par) 
         str = RsEval.Gebäude(par) 
         str = RsEval.SelVB(par) 
-        Dim obj As Object = RsEval.ExecuteDate();
-        System.Console.WriteLine(obj)        
-
-        ' System.Console.WriteLine(str)
+        ' Dim obj As Object = RsEval.ExecuteDate();
+        ' System.Console.WriteLine(obj) 
+        str = Test()
+        System.Console.WriteLine(str)
     End Sub
 End Class
 
@@ -206,6 +219,16 @@ End Class
                 Microsoft.CodeAnalysis.MetadataReference sysCorlib = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
                 Microsoft.CodeAnalysis.MetadataReference sysConsole = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(System.Console).Assembly.Location);
                 
+                var co = new Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilationOptions
+                (
+                    Microsoft.CodeAnalysis.OutputKind.ConsoleApplication
+                );
+                
+                
+                co.WithOptionStrict(Microsoft.CodeAnalysis.VisualBasic.OptionStrict.Off);
+                co.WithOptionExplicit(false);
+                co.WithOptionInfer(true);
+
 
 
                 // create the Roslyn compilation for the main program with
@@ -217,8 +240,7 @@ End Class
                         "program",
                         mainProgramString,
                         // note that here we pass the OutputKind set to ConsoleApplication
-                        compilerOptions: new Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilationOptions(
-                            Microsoft.CodeAnalysis.OutputKind.ConsoleApplication),
+                        compilerOptions: co,
                         references: new[] { sysRuntime, vbRuntime, sysCorlib, sysConsole }
                     );
                 

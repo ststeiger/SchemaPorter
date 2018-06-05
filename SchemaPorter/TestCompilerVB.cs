@@ -1,5 +1,6 @@
 ﻿
 using System.Linq;
+using Microsoft.CodeAnalysis.VisualBasic;
 
 
 namespace SchemaPorter
@@ -12,6 +13,8 @@ namespace SchemaPorter
         
         public static void Test()
         {
+            
+            
             try
             {
                 // code for class A
@@ -48,6 +51,7 @@ End Class
                     @"
 
 Public Class Program
+
     Public Shared Sub Main()
         ' System.Console.Write(A.Print())
         ' System.Console.WriteLine(B.Print())
@@ -59,14 +63,23 @@ End Class
 
                 #region class A compilation into A.netmodule
 
+                var co = new Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilationOptions
+                (
+                    Microsoft.CodeAnalysis.OutputKind.NetModule
+                );
+                
+                co.WithOptionStrict(Microsoft.CodeAnalysis.VisualBasic.OptionStrict.Off);
+                co.WithOptionExplicit(false);
+                co.WithOptionInfer(true);
+                
+                
                 // create Roslyn compilation for class A
                 Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilation compilationA =
                     CreateCompilationWithMscorlib
                     (
                         "A",
                         classAString,
-                        compilerOptions: new Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilationOptions(
-                            Microsoft.CodeAnalysis.OutputKind.NetModule)
+                        compilerOptions: co
                     );
 
                 // emit the compilation result to a byte array 
@@ -90,9 +103,7 @@ End Class
                     (
                         "B",
                         classBString,
-                        compilerOptions: new Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilationOptions(
-                            Microsoft.CodeAnalysis.OutputKind.NetModule),
-                        
+                        compilerOptions: co,
                         // since class B extends A, we need to 
                         // add a reference to A.netmodule
                         references: new[] {referenceA}
@@ -117,6 +128,9 @@ End Class
                 Microsoft.CodeAnalysis.MetadataReference sysConsole = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(System.Console).Assembly.Location);
                 Microsoft.CodeAnalysis.MetadataReference sysRuntime = Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location);
 
+                var co2 = new Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilationOptions(
+                    Microsoft.CodeAnalysis.OutputKind.ConsoleApplication);
+                
 
                 // create the Roslyn compilation for the main program with
                 // ConsoleApplication compilation options
@@ -127,8 +141,7 @@ End Class
                         "program",
                         mainProgramString,
                         // note that here we pass the OutputKind set to ConsoleApplication
-                        compilerOptions: new Microsoft.CodeAnalysis.VisualBasic.VisualBasicCompilationOptions(
-                            Microsoft.CodeAnalysis.OutputKind.ConsoleApplication),
+                        compilerOptions: co2,
                         references: new[] { sysCorlib, sysConsole, sysRuntime, referenceA, referenceB }
                     );
                 
@@ -225,7 +238,7 @@ End Class
             // create the syntax tree
             Microsoft.CodeAnalysis.SyntaxTree syntaxTree =
                 Microsoft.CodeAnalysis.VisualBasic.SyntaxFactory.ParseSyntaxTree(code, null, "");
-
+            
             // get the reference to mscore library
             Microsoft.CodeAnalysis.MetadataReference mscoreLibReference =
                 Microsoft.CodeAnalysis.AssemblyMetadata
