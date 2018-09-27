@@ -1,0 +1,16 @@
+﻿{
+  "classes": {
+    "nfs": {
+      "": {
+        "server": {
+          "exports": {
+            "0": "/srv/share1",
+            "1": "/srv/share3"
+          }
+        }
+      }
+    }
+  },
+  "environment": "production",
+  "parameters": ""
+}

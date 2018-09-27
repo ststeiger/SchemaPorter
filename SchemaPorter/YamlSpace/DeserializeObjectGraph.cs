@@ -24,7 +24,7 @@ namespace SchemaPorter.YamlSpace
             // SchemaPorter.foofoo.RootNode retVal = null;
             SchemaPorter.SimpleYamlSchema.RootObject retVal = null;
 
-            YamlDotNet.Serialization.Deserializer deserializer = 
+            YamlDotNet.Serialization.IDeserializer deserializer = 
                 new YamlDotNet.Serialization.DeserializerBuilder()
                 .WithNamingConvention(new YamlDotNet.Serialization.NamingConventions.CamelCaseNamingConvention())
                 //.IgnoreUnmatchedProperties()

@@ -1,16 +1,22 @@
 ﻿
+using Microsoft.Extensions.Configuration;
+
+// https://andrewlock.net/creating-a-custom-iconfigurationprovider-in-asp-net-core-to-parse-yaml/
+
 namespace SchemaPorter
 {
-    
-    
+
     public static class Program
     {
-        
-        
+
+
         public static void Main(string[] args)
         {
+            string yaml = YamlSpace.Yaml2JSON.TestSerialize();
+            System.Console.WriteLine(yaml);
 
-            // YamlSpace.Yaml2JSON.Test();
+
+            YamlSpace.Yaml2JSON.Test();
             // YamlSpace.DeserializeJSON.Test();
 
             // YamlSpace.DeserializeObjectGraph.Test();

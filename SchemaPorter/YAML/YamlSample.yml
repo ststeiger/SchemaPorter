@@ -1,0 +1,73 @@
+﻿---
+environment: production
+classes:
+  nfs::server:
+    exports:
+      - /srv/share1
+      - /srv/share3
+parameters:
+
+==> 
+
+{
+  "classes": {
+    "nfs": {
+      "": {
+        "server": {
+          "exports": {
+            "0": "/srv/share1",
+            "1": "/srv/share3"
+          }
+        }
+      }
+    }
+  },
+  "environment": "production",
+  "parameters": ""
+}
+
+
+-----------------------------------------------------------
+
+
+# A list of tasty fruits
+fruits:
+    - Apple
+    - Orange
+    - Strawberry
+    - Mango
+...
+
+==> 
+
+{
+  "fruits": {
+    "0": "Apple",
+    "1": "Orange",
+    "2": "Strawberry",
+    "3": "Mango"
+  }
+}
+
+
+-----------------------------------------------------------
+
+{
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Warning"
+    }
+  }
+}
+
+==> 
+
+{
+  "Logging": {
+    "IncludeScopes": "false",
+    "LogLevel": {
+      "Default": "Warning"
+    }
+  }
+}
