@@ -64,10 +64,57 @@ fruits:
 ==> 
 
 {
-  "Logging": {
-    "IncludeScopes": "false",
-    "LogLevel": {
-      "Default": "Warning"
+  "ConnectionStrings": [
+     {
+      "Name": "Test1": 
+      "ConnectionString": "SSPI",
+      "ProviderName": "SqlClient"
+    },
+    {
+      "Name": "Test2": 
+      "ConnectionString": "SSPI",
+      "ProviderName": "SqlClient"
+    }
+  ]
+}
+
+==> 
+
+ConnectionStrings:
+- Name: Test1
+  ConnectionString: SSPI
+  ProviderName: SqlClient
+- Name: Test2
+  ConnectionString: Un;PW;
+  ProviderName: SqlClient
+
+
+
+  ---------------
+  {
+  "ConnectionStrings": {
+  
+    "Test1": 
+    {
+      "ConnectionString": "SSPI",
+      "ProviderName": "SqlClient"
+    }
+
+    ,"Test2": {
+      "ConnectionString": "SSPI",
+      "ProviderName": "SqlClient"
     }
   }
 }
+
+
+==> 
+
+  ConnectionStrings:
+  Test1:
+    ConnectionString: SSPI
+    ProviderName: SqlClient
+  Test2:
+    ConnectionString: Un;PW;
+    ProviderName: SqlClient
+

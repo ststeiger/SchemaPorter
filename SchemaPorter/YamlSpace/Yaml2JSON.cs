@@ -10,10 +10,22 @@ namespace SchemaPorter.YamlSpace
         public string ProviderName { get; set; }
     }
 
-    
-    public class Config
+
+    public class OldConfig
     {
         public System.Collections.Generic.List<TestConnectionString> ConnectionStrings { get; set; }
+    }
+
+
+    public class NewConnectionString
+    {
+        public string ConnectionString { get; set; }
+        public string ProviderName { get; set; }
+    }
+
+    public class Config
+    {
+        public System.Collections.Generic.Dictionary<string, NewConnectionString> ConnectionStrings { get; set; }
     }
 
     // https://stackoverflow.com/questions/40762139/how-to-serialize-and-deserialize-a-type-class-object-in-c-sharp-into-yaml
@@ -25,10 +37,9 @@ namespace SchemaPorter.YamlSpace
         public static string TestSerialize()
         {
             Config cfg = new Config();
-            cfg.ConnectionStrings= new System.Collections.Generic.List<TestConnectionString>();
-
-            cfg.ConnectionStrings.Add(new TestConnectionString() { Name = "Test1", ConnectionString = "SSPI", ProviderName = "SqlClient" });
-            cfg.ConnectionStrings.Add(new TestConnectionString() { Name = "Test2", ConnectionString = "Un;PW;", ProviderName = "SqlClient" });
+            cfg.ConnectionStrings = new System.Collections.Generic.Dictionary<string, NewConnectionString>(System.StringComparer.OrdinalIgnoreCase);
+            cfg.ConnectionStrings.Add("Test1", new NewConnectionString() { ConnectionString = "SSPI", ProviderName = "SqlClient" });
+            cfg.ConnectionStrings.Add("Test2", new NewConnectionString() { ConnectionString = "Un;PW;", ProviderName = "SqlClient" });
 
             return TestSerialize(cfg);
         }
@@ -42,22 +53,33 @@ namespace SchemaPorter.YamlSpace
 
             // Note: Must be properties - doesn't work with public fields...
             string yaml = serializer.Serialize(value);
-            System.Console.WriteLine(yaml);
+            
+            return yaml;
+        }
+
+        public static string TestSerialize2(object value)
+        {
+            string yaml = null;
+
+            using (System.IO.StringWriter writer = new System.IO.StringWriter())
+            {
+                TestConnectionString obj = new TestConnectionString()
+                {
+                    Name = "Test1",
+                    ConnectionString = "SSPI",
+                    ProviderName = "SqlClient"
+                };
 
 
-            var writer = new System.IO.StringWriter();
-            var obj = new TestConnectionString() { Name = "Test1", ConnectionString = "SSPI", ProviderName = "SqlClient" };
+                new YamlDotNet.Serialization.SerializerBuilder()
+                    .EmitDefaults()
+                    .JsonCompatible()
+                    .Build()
+                    .Serialize(writer, obj, typeof(TestConnectionString)
+                );
 
-            new YamlDotNet.Serialization.SerializerBuilder()
-                .EmitDefaults()
-                .JsonCompatible()
-                .Build()
-                .Serialize(writer, obj, typeof(TestConnectionString)
-            );
-
-            string yamlTyped = writer.ToString();
-            System.Console.WriteLine(yamlTyped);
-
+                yaml = writer.ToString();
+            }
 
             return yaml;
         }
