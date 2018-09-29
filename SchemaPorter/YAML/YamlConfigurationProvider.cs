@@ -1,37 +1,81 @@
 ﻿
-using System.IO;
-using Microsoft.Win32;
-
 namespace Microsoft.Extensions.Configuration.Yaml
 {
 
 
-    public class RegAppliance()
+    public class RegAppliance 
     {
 
-        protected System.Collections.Generic.IDictionary<string, string>  m_data = 
-            new System.Collections.Generic.SortedDictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
 
+        protected System.Collections.Generic.IDictionary<string, string>  m_data = 
+            new System.Collections.Generic.SortedDictionary<string, string>(
+                System.StringComparer.OrdinalIgnoreCase
+        );
+
+
+        public static void SplitKey(string key, out string hive, out string branch)
+        {
+            int index = key.IndexOf('\\');
+            hive = string.Empty;
+            branch = string.Empty;
+
+            if (index == -1)
+                hive = key;
+            else
+            {
+                hive = key.Substring(0, index);
+                branch = key.Substring(index + 1);
+            }
+        }
+
+
+        public static Microsoft.Win32.RegistryKey ParseRootKey(string path)
+        {
+            Microsoft.Win32.RegistryKey key;
+            
+            switch (path)
+            {
+                case "HKCR":
+                case "HKEY_CLASSES_ROOT":
+                    key = Microsoft.Win32.Registry.ClassesRoot;
+                    break;
+                case "HKCU":
+                case "HKEY_CURRENT_USER":
+                    key = Microsoft.Win32.Registry.CurrentUser;
+                    break;
+                case "HKLM":
+                case "HKEY_LOCAL_MACHINE":
+                    key = Microsoft.Win32.Registry.LocalMachine;
+                    break;
+                case "HKU":
+                case "HKEY_USERS":
+                    key = Microsoft.Win32.Registry.Users;
+                    break;
+                case "HKPD":
+                case "HKEY_PERFORMANCE_DATA":
+                    key = Microsoft.Win32.Registry.PerformanceData;
+                    break;
+                default:
+                    key = Microsoft.Win32.Registry.CurrentConfig;
+                    break;
+            }
+            return key;
+        }
+        
 
         public System.Collections.Generic.IDictionary<string, string> GetData()
         {
             if (System.Environment.OSVersion.Platform == System.PlatformID.Unix)
             {
                 // "/etc/COR/All"
-                var di = new System.IO.DirectoryInfo("path");
-                di.GetDirectories("*.*", SearchOption.TopDirectoryOnly);
-                di.GetFiles("*.*", SearchOption.TopDirectoryOnly);
-                System.IO.Directory.GetFiles("path", "*.*", SearchOption.TopDirectoryOnly);
+                System.IO.DirectoryInfo di = new System.IO.DirectoryInfo("path");
+                di.GetDirectories("*.*", System.IO.SearchOption.TopDirectoryOnly);
+                di.GetFiles("*.*", System.IO.SearchOption.TopDirectoryOnly);
+                System.IO.Directory.GetFiles("path", "*.*", System.IO.SearchOption.TopDirectoryOnly);
             }
 
-            Microsoft.Win32.Registry.CurrentConfig;
-            
-            // Microsoft.Win32.RegistryValueKind GetValueKind
-            Microsoft.Win32.RegistryKey rk = null;
-            rk.GetValueKind("name");
-            rk.SetValue("name", "value", RegistryValueKind.String);
-            
-            
+
+
             return this.m_data;
         }
 
@@ -48,6 +92,7 @@ namespace Microsoft.Extensions.Configuration.Yaml
 
         public RegistryConfiguratonSource()
         { }
+
 
         public RegistryConfiguratonSource(string key)
         {
@@ -85,8 +130,7 @@ namespace Microsoft.Extensions.Configuration.Yaml
             this.m_source = source;
         }
         
-        
-        
+
         /// <summary>Loads (or reloads) the data for this provider.</summary>
         public override void Load()
         {
@@ -108,7 +152,8 @@ namespace Microsoft.Extensions.Configuration.Yaml
     }
     
     
-    public class YamlConfigurationProvider : Microsoft.Extensions.Configuration.FileConfigurationProvider
+    public class YamlConfigurationProvider 
+        : Microsoft.Extensions.Configuration.FileConfigurationProvider
     {
         
         
