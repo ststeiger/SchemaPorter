@@ -17,6 +17,7 @@ namespace SchemaPorter.Settings
             Microsoft.Extensions.Configuration.IConfigurationBuilder builder = 
                 new Microsoft.Extensions.Configuration.ConfigurationBuilder()
                 .SetBasePath(env.ProjectRootPath)
+                .AddRegistryKey("foo")
                 .AddYamlFile("settings.yml", optional: false) // Microsoft.Extensions.Configuration.Yaml.dll
                                                               // .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) // Microsoft.Extensions.Configuration.Json.dll
                                                               // .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
