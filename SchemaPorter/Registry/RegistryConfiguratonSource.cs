@@ -6,16 +6,18 @@ namespace Microsoft.Extensions.Configuration.Registry
         :Microsoft.Extensions.Configuration.IConfigurationSource
     {
 
-        public string Key;
-        
-        
+        public string RegistryKey;
+        public string EtcDirectory;
+
+
         public RegistryConfigurationSource()
         { }
         
         
-        public RegistryConfigurationSource(string key)
+        public RegistryConfigurationSource(string registryKey, string etcDirectory)
         {
-            this.Key = key;
+            this.RegistryKey = registryKey;
+            this.EtcDirectory = etcDirectory;
         }
         
         

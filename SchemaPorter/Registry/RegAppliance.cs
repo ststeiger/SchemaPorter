@@ -7,10 +7,14 @@ namespace Microsoft.Extensions.Configuration.Registry
     {
 
 
-        public static System.Collections.Generic.Dictionary<string, string> RecursivelyListKeys(Microsoft.Win32.RegistryKey baseKey)
+        public static System.Collections.Generic.Dictionary<string, string> RecursivelyListKeys(
+            string registyBase, 
+            Microsoft.Win32.RegistryKey baseKey)
         {
             System.Collections.Generic.Dictionary<string, string> ls =
                 new System.Collections.Generic.Dictionary<string, string>();
+
+            
 
             string[] valueNames = baseKey.GetValueNames();
             System.Array.Sort(valueNames, delegate (string s1, string s2)
@@ -22,6 +26,8 @@ namespace Microsoft.Extensions.Configuration.Registry
             foreach (string valueName in valueNames)
             {
                 string key = baseKey.Name + @"\" + valueName;
+                key = key.Substring(registyBase.Length + 1);
+                key = key.Replace('\\', ':');
 
                 try
                 {
@@ -84,13 +90,15 @@ namespace Microsoft.Extensions.Configuration.Registry
             foreach (string subKey in subkeys)
             {
                 string newBasePath = baseKey.Name + @"\" + subKey;
-
+                newBasePath = newBasePath.Substring(registyBase.Length + 1);
+                newBasePath = newBasePath.Replace('\\', ':');
+                
                 try
                 {
                     Microsoft.Win32.RegistryKey sk = baseKey.OpenSubKey(subKey);
                     // ls.Add(newBasePath);
 
-                    System.Collections.Generic.Dictionary<string, string> lss = RecursivelyListKeys(sk);
+                    System.Collections.Generic.Dictionary<string, string> lss = RecursivelyListKeys(registyBase, sk);
                     // ls.AddRange(lss);
 
                     foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in lss)
@@ -211,9 +219,11 @@ namespace Microsoft.Extensions.Configuration.Registry
             for (int i = 1; i < paths.Length; ++i)
             {
                 baseKey = baseKey.OpenSubKey(paths[i]);
+                if (baseKey == null)
+                    throw new System.ArgumentException("Invalid registry key.");
             } // Next i 
 
-            System.Collections.Generic.Dictionary<string, string> ls = RecursivelyListKeys(baseKey);
+            System.Collections.Generic.Dictionary<string, string> ls = RecursivelyListKeys(path, baseKey);
             return ls;
         } // End Function RecursivelyListKeys 
 

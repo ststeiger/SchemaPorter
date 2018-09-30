@@ -17,12 +17,13 @@ namespace SchemaPorter.Settings
             Microsoft.Extensions.Configuration.IConfigurationBuilder builder = 
                 new Microsoft.Extensions.Configuration.ConfigurationBuilder()
                 .SetBasePath(env.ProjectRootPath)
-                .AddJsonFile(@"settings.json")
-                // .AddRegistryKey("foo")
-                // .AddYamlFile("settings.yml", optional: false) // Microsoft.Extensions.Configuration.Yaml.dll
-                // .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) // Microsoft.Extensions.Configuration.Json.dll
-                // .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                // .AddEnvironmentVariables() // Microsoft.Extensions.Configuration.EnvironmentVariables.dll
+                //.AddJsonFile(@"settings.json")
+                .AddRegistryKey(@"HKEY_CURRENT_USER\Software\COR\All", "/etc/COR/All")
+                .AddRegistryKey(@"HKEY_CURRENT_USER\Software\COR\SchemaPorter", "/etc/COR/SchemaPorter")
+            // .AddYamlFile("settings.yml", optional: false) // Microsoft.Extensions.Configuration.Yaml.dll
+            // .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) // Microsoft.Extensions.Configuration.Json.dll
+            // .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+            // .AddEnvironmentVariables() // Microsoft.Extensions.Configuration.EnvironmentVariables.dll
             ;
 
             Microsoft.Extensions.Configuration.IConfigurationRoot Configuration = builder.Build();

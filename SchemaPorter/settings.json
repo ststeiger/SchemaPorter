@@ -1,4 +1,14 @@
 ﻿{
   "envi:ronment": "production",
-  "parameters": ""
+  "parameters": "",
+
+  "ConnectionString": {
+    "server": "localhost",
+    "instance": null,
+    "port": null,
+    "initial catalog": "top_secret",
+    "username": "apws",
+    "password": "top_secret"
+  }
+
 }

@@ -30,19 +30,18 @@ namespace Microsoft.Extensions.Configuration.Registry
             // "[classes:nfs::server:exports:1, /srv/share3]"
             // "[environment, production]"
 
-            System.Console.WriteLine(this.m_source);
-
-            //if (System.Environment.OSVersion.Platform == System.PlatformID.Unix)
-            if(true)
+            if (System.Environment.OSVersion.Platform == System.PlatformID.Unix)
             {
-                string path = "/etc/COR/All";
-                path = @"C:\Users\Administrator\Documents\Visual Studio 2017\Projects\aaaRegExplore\Comparers";
-                this.Data = Microsoft.Extensions.Configuration.Registry.EtcAppliance.ReadEtc(path);
+                if(!string.IsNullOrWhiteSpace( this.m_source.EtcDirectory))
+                    this.Data = Microsoft.Extensions.Configuration.Registry.EtcAppliance.ReadEtc(this.m_source.EtcDirectory);
             } // End if (System.Environment.OSVersion.Platform == System.PlatformID.Unix)
             else
             {
-                this.Data = Microsoft.Extensions.Configuration.Registry.RegAppliance.RecursivelyListKeys(@"HKEY_CURRENT_USER\Software\COR\RedmineMailService");
+                if (!string.IsNullOrWhiteSpace(this.m_source.RegistryKey))
+                    this.Data = Microsoft.Extensions.Configuration.Registry.RegAppliance.RecursivelyListKeys(this.m_source.RegistryKey);
             }
+
+            // if (this.Data == null) this.Data = new System.Collections.Generic.Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
 
             // How to escape colon ? 
             //  ¯\_(ツ)_/¯
