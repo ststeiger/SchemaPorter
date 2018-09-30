@@ -17,16 +17,17 @@ namespace SchemaPorter.Settings
             Microsoft.Extensions.Configuration.IConfigurationBuilder builder = 
                 new Microsoft.Extensions.Configuration.ConfigurationBuilder()
                 .SetBasePath(env.ProjectRootPath)
-                .AddRegistryKey("foo")
-                .AddYamlFile("settings.yml", optional: false) // Microsoft.Extensions.Configuration.Yaml.dll
+                .AddJsonFile(@"settings.json")
+                // .AddRegistryKey("foo")
+                // .AddYamlFile("settings.yml", optional: false) // Microsoft.Extensions.Configuration.Yaml.dll
                 // .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) // Microsoft.Extensions.Configuration.Json.dll
                 // .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 // .AddEnvironmentVariables() // Microsoft.Extensions.Configuration.EnvironmentVariables.dll
             ;
-            
+
             Microsoft.Extensions.Configuration.IConfigurationRoot Configuration = builder.Build();
             
-            IConfigurationSection thisSection = Configuration.GetSection("AppSettings:token");
+            // IConfigurationSection thisSection = Configuration.GetSection("AppSettings:token");
             // thisSection.Key
             // thisSection.Value;
             // services.Configure<StorageOptions>(Configuration.GetSection("AzureStorageConfig"));
@@ -39,7 +40,7 @@ namespace SchemaPorter.Settings
             Newtonsoft.Json.Linq.JObject conf = GetConfigAsJObject(Configuration);
             string configValues = Newtonsoft.Json.JsonConvert.SerializeObject(conf, Newtonsoft.Json.Formatting.Indented);
             System.Console.WriteLine(configValues);
-        }
+        } // End Sub Test 
 
 
         public static void ReadOldSettings()
@@ -47,7 +48,7 @@ namespace SchemaPorter.Settings
             // Add reference to System.Configuration.ConfigurationManager
             System.Configuration.ConnectionStringSettings a = System.Configuration.ConfigurationManager.ConnectionStrings["COR-W10-112"];
             System.Console.WriteLine(a);
-        }
+        } // End Sub ReadOldSettings 
 
 
         // https://andrewlock.net/converting-web-config-files-to-appsettings-json-with-a-net-core-global-tool/
@@ -57,7 +58,7 @@ namespace SchemaPorter.Settings
 
             foreach (Microsoft.Extensions.Configuration.IConfigurationSection child in config.GetChildren())
             {
-                //not strictly correct, but we'll go with it.
+                // Not strictly correct, but we'll go with it.
                 bool isSection = (child.Value == null);
                 if (isSection)
                 {
@@ -68,11 +69,14 @@ namespace SchemaPorter.Settings
                 {
                     root.Add(child.Key, child.Value);
                 }
-            }
+
+            } // Next child 
 
             return root;
-        }
+        } // End Function GetConfigAsJObject 
 
 
-    }
-}
+    } // End Class SettingsHelper 
+
+
+} // End Namespace SchemaPorter.Settings 

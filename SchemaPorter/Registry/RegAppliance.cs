@@ -1,18 +1,12 @@
 
 namespace Microsoft.Extensions.Configuration.Registry
 {
-    
-    
+
+
     public class RegAppliance 
     {
-        
-        
-        protected System.Collections.Generic.IDictionary<string, string>  m_data = 
-            new System.Collections.Generic.SortedDictionary<string, string>(
-                System.StringComparer.OrdinalIgnoreCase
-        );
-        
-        
+
+
         public static System.Collections.Generic.Dictionary<string, string> RecursivelyListKeys(Microsoft.Win32.RegistryKey baseKey)
         {
             System.Collections.Generic.Dictionary<string, string> ls =
@@ -114,9 +108,9 @@ namespace Microsoft.Extensions.Configuration.Registry
             } // Next subKey 
 
             return ls;
-        }
-        
-        
+        } // End Function RecursivelyListKeys 
+
+
         public static string ToHiveName(Microsoft.Win32.RegistryHive regHive)
         {
             switch (regHive)
@@ -158,12 +152,14 @@ namespace Microsoft.Extensions.Configuration.Registry
         } // End Function ToHiveName 
 
 
+        // Microsoft.Extensions.Configuration.Registry.RegAppliance.RecursivelyListKeys("HKEY_CURRENT_USER\Software\COR\RedmineMailService");
         public static System.Collections.Generic.Dictionary<string, string> RecursivelyListKeys(string path)
         {
             if (string.IsNullOrEmpty(path) || path.Trim() == string.Empty)
             {
                 throw new System.ArgumentNullException("path");
-            }
+            } // End if (string.IsNullOrEmpty(path) || path.Trim() == string.Empty) 
+
 
             if (path.StartsWith(@"Computer\"))
                 path = path.Substring(@"Computer\".Length);
@@ -178,6 +174,13 @@ namespace Microsoft.Extensions.Configuration.Registry
             // Microsoft.Win32.RegistryKey HKCC = Microsoft.Win32.Registry.CurrentConfig;
             // Microsoft.Win32.RegistryKey HKLM = Microsoft.Win32.Registry.LocalMachine;
 
+
+            // object foo = Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Software\COR\SchemaPorter\SubDir", "abc", "default");
+            // System.Console.WriteLine(foo);
+
+
+            // Microsoft.Win32.RegistryKey remoteHive = Microsoft.Win32.RegistryKey.OpenRemoteBaseKey(Win32.RegistryHive.LocalMachine, "machineName");
+
             // Microsoft.Win32.RegistryKey hive = Microsoft.Win32.RegistryKey.OpenBaseKey(
             //     Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Default
             // );
@@ -187,6 +190,11 @@ namespace Microsoft.Extensions.Configuration.Registry
 
             Microsoft.Win32.RegistryKey baseKey = null;
 
+
+            // baseKey.GetValue
+            // baseKey.SetValue
+            // baseKey.GetAccessControl
+            
             System.Array values = System.Enum.GetValues(typeof(Microsoft.Win32.RegistryHive));
             foreach (Microsoft.Win32.RegistryHive thisHive in values)
             {
@@ -212,6 +220,7 @@ namespace Microsoft.Extensions.Configuration.Registry
 
         public static string ToDataType(Microsoft.Win32.RegistryValueKind valueKind)
         {
+
             switch (valueKind)
             {
                 case Microsoft.Win32.RegistryValueKind.Binary:
@@ -230,42 +239,12 @@ namespace Microsoft.Extensions.Configuration.Registry
                     return "REG_UNKNOWN";
                 default:
                     return string.Empty;
-            }
+            } // End switch (valueKind) 
+
         } // End Functon ToDataType 
         
-        
-        public static void Test()
-        {
-            System.Collections.Generic.Dictionary<string, string> ls = RecursivelyListKeys(@"Computer\HKEY_CURRENT_USER\Software\COR\SchemaPorter");
-            System.Console.WriteLine(ls);
 
-            // Microsoft.Win32.RegistryValueKind GetValueKind
-            Microsoft.Win32.RegistryKey rk = null;
-            Microsoft.Win32.RegistryValueKind rvk = rk.GetValueKind("name");
-            rk.SetValue("name", "value", Microsoft.Win32.RegistryValueKind.String);
+    } // End Class RegAppliance 
 
 
-            // Microsoft.Win32.RegistryHive.CurrentConfig
-
-        } // End Sub Test 
-        
-        
-        public System.Collections.Generic.IDictionary<string, string> GetData()
-        {
-            if (System.Environment.OSVersion.Platform == System.PlatformID.Unix)
-            {
-                // "/etc/COR/All"
-                System.IO.DirectoryInfo di = new System.IO.DirectoryInfo("path");
-                di.GetDirectories("*.*", System.IO.SearchOption.TopDirectoryOnly);
-                di.GetFiles("*.*", System.IO.SearchOption.TopDirectoryOnly);
-                System.IO.Directory.GetFiles("path", "*.*", System.IO.SearchOption.TopDirectoryOnly);
-            } // End if (System.Environment.OSVersion.Platform == System.PlatformID.Unix)
-            
-            return this.m_data;
-        }
-        
-        
-    }
-    
-    
-}
+} // End Namespace Microsoft.Extensions.Configuration.Registry 
