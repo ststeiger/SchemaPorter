@@ -9,6 +9,18 @@ namespace SchemaPorter.Settings
     class SettingsHelper
     {
 
+        public static void TestYaml()
+        {
+            string yaml = YamlSpace.Yaml2JSON.TestSerialize();
+            System.Console.WriteLine(yaml);
+
+            YamlSpace.Yaml2JSON.Test();
+            // YamlSpace.DeserializeJSON.Test();
+
+            // YamlSpace.DeserializeObjectGraph.Test();
+            System.Console.WriteLine("Finished.");
+        }
+
 
         public static void Test()
         {
@@ -17,13 +29,13 @@ namespace SchemaPorter.Settings
             Microsoft.Extensions.Configuration.IConfigurationBuilder builder = 
                 new Microsoft.Extensions.Configuration.ConfigurationBuilder()
                 .SetBasePath(env.ProjectRootPath)
-                //.AddJsonFile(@"settings.json")
+                // .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) // Microsoft.Extensions.Configuration.Json.dll
+                // .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                // .AddJsonFile("settings.json")
+                // .AddYamlFile("settings.yml", optional: false) // Microsoft.Extensions.Configuration.Yaml.dll
                 .AddRegistryKey(@"HKEY_CURRENT_USER\Software\COR\All", "/etc/COR/All")
                 .AddRegistryKey(@"HKEY_CURRENT_USER\Software\COR\SchemaPorter", "/etc/COR/SchemaPorter")
-            // .AddYamlFile("settings.yml", optional: false) // Microsoft.Extensions.Configuration.Yaml.dll
-            // .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) // Microsoft.Extensions.Configuration.Json.dll
-            // .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-            // .AddEnvironmentVariables() // Microsoft.Extensions.Configuration.EnvironmentVariables.dll
+                // .AddEnvironmentVariables() // Microsoft.Extensions.Configuration.EnvironmentVariables.dll
             ;
 
             Microsoft.Extensions.Configuration.IConfigurationRoot Configuration = builder.Build();

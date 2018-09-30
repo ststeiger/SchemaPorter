@@ -7,7 +7,7 @@
     "instance": null,
     "port": null,
     "initial catalog": "top_secret",
-    "username": "apws",
+    "username": "aws_web_service",
     "password": "top_secret"
   }
 

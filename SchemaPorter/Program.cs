@@ -46,15 +46,6 @@ namespace SchemaPorter
         public static void Main(string[] args)
         {
             SchemaPorter.Settings.SettingsHelper.Test();
-            string yaml = YamlSpace.Yaml2JSON.TestSerialize();
-            System.Console.WriteLine(yaml);
-            
-            YamlSpace.Yaml2JSON.Test();
-            // YamlSpace.DeserializeJSON.Test();
-            
-            // YamlSpace.DeserializeObjectGraph.Test();
-            System.Console.WriteLine("hello");
-            
             // TestSMO.Test();
             
             
