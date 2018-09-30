@@ -34,20 +34,6 @@ namespace Microsoft.Extensions.Configuration
                 , reloadOnChange: reloadOnChange
             );
         }
-
-
-
-        public static Microsoft.Extensions.Configuration.IConfigurationBuilder AddRegistryKey(
-            this Microsoft.Extensions.Configuration.IConfigurationBuilder builder
-            , string key 
-            )
-        {
-            Microsoft.Extensions.Configuration.Yaml.RegistryConfiguratonSource rs = 
-                new Microsoft.Extensions.Configuration.Yaml.RegistryConfiguratonSource(key);
-            
-            builder.Add(rs);
-            return builder;
-        }
         
         
         public static Microsoft.Extensions.Configuration.IConfigurationBuilder AddYamlFile(

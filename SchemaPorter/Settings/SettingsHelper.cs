@@ -19,12 +19,23 @@ namespace SchemaPorter.Settings
                 .SetBasePath(env.ProjectRootPath)
                 .AddRegistryKey("foo")
                 .AddYamlFile("settings.yml", optional: false) // Microsoft.Extensions.Configuration.Yaml.dll
-                                                              // .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) // Microsoft.Extensions.Configuration.Json.dll
-                                                              // .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                                                              // .AddEnvironmentVariables() // Microsoft.Extensions.Configuration.EnvironmentVariables.dll
+                // .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) // Microsoft.Extensions.Configuration.Json.dll
+                // .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                // .AddEnvironmentVariables() // Microsoft.Extensions.Configuration.EnvironmentVariables.dll
             ;
-
+            
             Microsoft.Extensions.Configuration.IConfigurationRoot Configuration = builder.Build();
+            
+            IConfigurationSection thisSection = Configuration.GetSection("AppSettings:token");
+            // thisSection.Key
+            // thisSection.Value;
+            // services.Configure<StorageOptions>(Configuration.GetSection("AzureStorageConfig"));
+            
+            // Just the value of the token
+            // string configValue = Configuration["AppSettings:token"];
+            
+            
+            // https://stackoverflow.com/questions/31453495/how-to-read-appsettings-values-from-config-json-in-asp-net-core
             Newtonsoft.Json.Linq.JObject conf = GetConfigAsJObject(Configuration);
             string configValues = Newtonsoft.Json.JsonConvert.SerializeObject(conf, Newtonsoft.Json.Formatting.Indented);
             System.Console.WriteLine(configValues);
