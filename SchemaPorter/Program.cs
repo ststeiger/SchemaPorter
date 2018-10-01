@@ -45,6 +45,21 @@ namespace SchemaPorter
         
         public static void Main(string[] args)
         {
+            // Another way: https://github.com/thinksquirrel/nanosvg-csharp
+            string d = @"M3.726 91.397h9.349v-17.64H3.726zM18.19 79.578l4.41-4.056 4.41 4.056v3l-3.175-3.176v8.82h-2.293v-8.82l-3.352 3.175zM35.83 78.344h.175l.177-.177H36.71v-.176h.176l.177-.176h.176v-.177l.177-.176.176-.177v-.352h.176V76.05l-.176-.177v-.352h-.176v-.177h-.177v-.176l-.176-.177h-.177l-.176-.176h-.176v-.176h-1.412l-.176.176h-.176l-.177.176h-.176v.177h-.176v.176h-.177v.353h-.176V77.109l.176.176v.177h.177v.176l.176.177h.176v.176h.177l.176.176h.353l.176.177h.177z";
+
+            // var cp1 = new Svg.CoordinateParser(d);
+            var segmentList = Svg.SvgPathBuilder.Parse(d);
+            System.Console.WriteLine(segmentList);
+
+            foreach (Svg.Pathing.SvgPathSegment seg in segmentList)
+            {
+                System.Console.WriteLine(seg.Start);
+                System.Console.WriteLine(seg.End);
+            }
+
+
+
             SchemaPorter.FileSearch.Test();
             return;
             SchemaPorter.Settings.SettingsHelper.Test();

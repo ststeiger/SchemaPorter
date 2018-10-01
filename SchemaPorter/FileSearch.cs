@@ -1,7 +1,4 @@
 
-using System.Collections.Generic;
-
-
 namespace SchemaPorter
 {
     
@@ -25,29 +22,28 @@ namespace SchemaPorter
     
     public class FileSearch
     {
-        
-        
-        /*
-/root/github/RedmineMailService/RedmineMailService/Redmine/API.cs (132):   , SecretManager.GetSecret<string>("RedmineSuperUser")
-/root/github/RedmineMailService/RedmineMailService/Redmine/API.cs (133):   , SecretManager.GetSecret<string>("RedmineSuperUserPassword")
-/root/github/SchemaPorter/SchemaPorter/FileSearch.cs (55):                    if (line.IndexOf("RedmineSuperUser") != -1)
-/root/github/CorMine/RedmineClient/RedmineFactory.cs (43):                 , TestPlotly.SecretManager.GetSecret<string>("RedmineSuperUser")
-/root/github/CorMine/RedmineClient/RedmineFactory.cs (44):                 , TestPlotly.SecretManager.GetSecret<string>("RedmineSuperUserPassword")
-/root/github/CorMine/CorMine/AppCode/RedmineFactory.cs (42):               , SecretManager.GetSecret<string>("RedmineSuperUser")
-/root/github/CorMine/CorMine/AppCode/RedmineFactory.cs (43):               , SecretManager.GetSecret<string>("RedmineSuperUserPassword")
-         */
-        
+
+
+        // /root/github/RedmineMailService/RedmineMailService/Redmine/API.cs (132):   , SecretManager.GetSecret<string>("RedmineSuperUser")
+        // /root/github/RedmineMailService/RedmineMailService/Redmine/API.cs (133):   , SecretManager.GetSecret<string>("RedmineSuperUserPassword")
+        // /root/github/SchemaPorter/SchemaPorter/FileSearch.cs (55):                    if (line.IndexOf("RedmineSuperUser") != -1)
+        // /root/github/CorMine/RedmineClient/RedmineFactory.cs (43):                 , TestPlotly.SecretManager.GetSecret<string>("RedmineSuperUser")
+        // /root/github/CorMine/RedmineClient/RedmineFactory.cs (44):                 , TestPlotly.SecretManager.GetSecret<string>("RedmineSuperUserPassword")
+        // /root/github/CorMine/CorMine/AppCode/RedmineFactory.cs (42):               , SecretManager.GetSecret<string>("RedmineSuperUser")
+        // /root/github/CorMine/CorMine/AppCode/RedmineFactory.cs (43):               , SecretManager.GetSecret<string>("RedmineSuperUserPassword")
+
         
         public static void Test()
         {
             string path = @"/root/github";
+            path = @"D:\username\Documents\Visual Studio 2017\Projects";
             string searchTerm = @"RedmineSuperUser";
             
             string[] filez = System.IO.Directory.GetFiles(path, "*.cs", System.IO.SearchOption.AllDirectories);
 
             for (int i = 0; i < filez.Length; ++i)
             {
-                List<SearchResult> ls = SearchContent(filez[i], searchTerm);
+                System.Collections.Generic.List<SearchResult> ls = SearchContent(filez[i], searchTerm);
                 for (int j = 0; j < ls.Count; ++j)
                 {
                     System.Console.WriteLine(filez[i] + " ("+ls[j].LineNumber.ToString()+"):\t" + ls[j].Line);
@@ -60,9 +56,9 @@ namespace SchemaPorter
 
         
         
-        public static List<SearchResult> SearchContent(string file, string searchTerm)
+        public static System.Collections.Generic.List<SearchResult> SearchContent(string file, string searchTerm)
         {
-            List<SearchResult> ls = new List<SearchResult>();
+            System.Collections.Generic.List<SearchResult> ls = new System.Collections.Generic.List<SearchResult>();
             
             using (System.IO.StreamReader reader = new System.IO.StreamReader(file))
             {

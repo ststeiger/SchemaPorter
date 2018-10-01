@@ -4,6 +4,9 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="NewFolder\nano.cs" />
+    <Compile Remove="NewFolder\PathSegments\Grapha\FillMode.cs" />
+    <Compile Remove="NewFolder\PathSegments\Grapha\PathPointType.cs" />
     <Compile Remove="YamlSpace\Schema\Working.cs" />
   </ItemGroup>
   <ItemGroup>
