@@ -45,6 +45,8 @@ namespace SchemaPorter
         
         public static void Main(string[] args)
         {
+            SchemaPorter.FileSearch.Test();
+            return;
             SchemaPorter.Settings.SettingsHelper.Test();
             // TestSMO.Test();
             

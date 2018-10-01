@@ -30,9 +30,9 @@ namespace Microsoft.Extensions.Configuration.Registry
 
                 using (System.IO.FileStream fs = fi.OpenRead()) 
                 { 
-                    using (System.IO.StreamReader sr = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8, true)) 
-                    { 
-                        dict[key] = sr.ReadToEnd(); 
+                    using (System.IO.StreamReader sr = new System.IO.StreamReader(fs, System.Text.Encoding.UTF8, true))
+                    {
+                        dict[key] = sr.ReadToEnd().Trim(new char[]{'\r', '\n', '\v'});
                     } // End Using sr 
 
                 } // End Using fs 
