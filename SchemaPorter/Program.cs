@@ -57,10 +57,7 @@ namespace SchemaPorter
                 System.Console.WriteLine(seg.Start);
                 System.Console.WriteLine(seg.End);
             }
-
-
-
-            SchemaPorter.FileSearch.Test();
+            
             return;
             SchemaPorter.Settings.SettingsHelper.Test();
             // TestSMO.Test();
