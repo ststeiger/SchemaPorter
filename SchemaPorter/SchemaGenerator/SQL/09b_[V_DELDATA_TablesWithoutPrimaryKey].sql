@@ -1,0 +1,27 @@
+
+IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[dbo].[V_DELDATA_TablesWithoutPrimaryKey]'))
+DROP VIEW [dbo].[V_DELDATA_TablesWithoutPrimaryKey]
+GO
+
+
+
+
+
+CREATE VIEW [dbo].[V_DELDATA_TablesWithoutPrimaryKey] 
+AS 
+SELECT 
+	 TABLE_CATALOG 
+	,TABLE_SCHEMA 
+	,TABLE_NAME 
+	,TABLE_TYPE 
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_TYPE = 'BASE TABLE' 
+AND TABLE_SCHEMA + '.' + TABLE_NAME NOT IN 
+(
+	SELECT TABLE_SCHEMA + '.' + TABLE_NAME 
+	FROM V_DELDATA_PrimaryKeyColumns 
+)
+
+
+GO
+
