@@ -1,17 +1,21 @@
 ﻿
 // https://andrewlock.net/creating-a-custom-iconfigurationprovider-in-asp-net-core-to-parse-yaml/
 
+using System.Collections.Generic;
+
 namespace SchemaPorter
 {
-    
-    
+
+
     public static class Program
     {
-        
-        
+
+
         static void EnumRegistry()
         {
-            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
+            Microsoft.Win32.RegistryKey key =
+                Microsoft.Win32.Registry.LocalMachine.OpenSubKey(
+                    "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
             foreach (string subkeyName in key.GetSubKeyNames())
             {
                 System.Console.WriteLine(subkeyName);
@@ -41,8 +45,27 @@ namespace SchemaPorter
 
             System.Console.ReadLine();
         }
-        
-        
+
+        public static System.DateTime GetColumnInfo()
+        {
+            return null;
+        }
+
+        public static string GenerateInsertScript()
+        {
+            return null;
+        }
+
+
+        public static void foo()
+        {
+            System.Collections.Generic.Stack<string> stack = new Stack<string>();
+            string isEmpty = stack.Peek();
+            stack.Push("abc");
+            string abc = stack.Pop();
+        }
+
+
         public static void Main(string[] args)
         {
             // Another way: https://github.com/thinksquirrel/nanosvg-csharp
