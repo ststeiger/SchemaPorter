@@ -1,5 +1,5 @@
 ﻿
-namespace SchemaPorter.SchemaGenerator
+namespace SchemaPorter.SchemaGeneratorPocos
 {
 
     // interface list structure
