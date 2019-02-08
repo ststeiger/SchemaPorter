@@ -1,0 +1,64 @@
+﻿
+create table variable/temp-table: 
+tables views, procedures, table-valued, scalar, assemblies, indices, primary keys, foreign keys, columns, column-data-types, custom-types
+
+
+
+create database backup - if fail - exit 
+check for additional entities 
+check and backup functions, procedures, views, default values, primary keys, foreign-keys, indices   
+drop functions, procedures, views, foreign keys, primary keys, indices
+
+
+
+create custom types
+create scalar functions dummy
+create table functions dummy 
+create views dummy 
+create procedures dummy 
+
+
+create tables if not exists 
+update tables with missing columns 
+check and update nullability
+check and update data types
+
+
+
+check all foreign keys
+remove all foreign keys
+remove all primary keys
+
+
+check all indices
+remove all indices
+create all indices
+
+
+check all default values
+drop all default values
+create all default values
+
+
+create primary keys
+create foreign keys
+
+
+alter scalar functions
+alter table functions
+alter views
+alter procedures 
+
+
+
+
+TODO:
+report state
+log errors 
+protocol activities 
+ASSEMBLIES
+CLR
+remove all triggers
+create all triggers
+database triggers
+linked servers 
