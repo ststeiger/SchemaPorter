@@ -12,14 +12,14 @@ namespace SchemaPorter
         // schemas
         // tables column, pk, fk, uc, uix, 
         // views, procedures, scalar_functions, table_functions, triggers, indices, 
-        
+
         // hashset tables
         // dictionary table-hashset columns
         // dictionary table-columns
         // dictionary table-columns-properties
         // dictionary table-computed columns
         // dictionary table-non-computed columns
-        
+
         // hashset views
         // dictionary view-hashset columns
         // dictionary views-columns
@@ -28,46 +28,453 @@ namespace SchemaPorter
         // dictionary views tables
         // dictionary views scalar functions
         // dictionary views table functions
-        
-        
-        
-        
-        
+
+
+
+
+
         public static void ListUserDefinedTypes() { }
 
-        public static void ListAssemblies() { }
+        public static void ListAssemblies()
+        {
+            string sql = @"
+SELECT 
+	 name
+	,clr_name
+	,permission_set_desc
+FROM sys.assemblies
+";
+        }
+        public static void ListDatabases()
+        {
+            string sql = @"
+SELECT 
+	 name
+	,compatibility_level
+	,user_access_desc
+	,state_desc
+	,is_read_only
+	,snapshot_isolation_state_desc
+	,recovery_model_desc
+	,is_quoted_identifier_on
+	,is_fulltext_enabled
+	,is_trustworthy_on
+FROM sys.databases 
+";
+        }
 
-        
-        public static void ListTables() { }
-        public static void ListColumns() { }
-        public static void ListViews() { }
-        
-        public static void ListScalarFunctions() { }
+
+        public static void ListSchemas()
+        {
+            string sql = @"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA";
+        }
+        public static void ListTables()
+        {
+            string sql = @"
+SELECT 
+	 TABLE_SCHEMA	
+	,TABLE_NAME
+FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_TYPE = 'BASE TABLE' 
+";
+        }
+
+
+        public static void ListColumns()
+        {
+            string sql = @"
+SELECT 
+	 TABLE_SCHEMA
+	,TABLE_NAME
+	,COLUMN_NAME
+	,ORDINAL_POSITION
+	,COLUMN_DEFAULT
+	,IS_NULLABLE
+	,DATA_TYPE
+	,CHARACTER_MAXIMUM_LENGTH
+	,CHARACTER_OCTET_LENGTH
+	,NUMERIC_PRECISION
+	,NUMERIC_PRECISION_RADIX
+	,NUMERIC_SCALE
+	,DATETIME_PRECISION
+	,CHARACTER_SET_CATALOG
+	,CHARACTER_SET_SCHEMA
+	,CHARACTER_SET_NAME
+	,COLLATION_CATALOG
+	,COLLATION_SCHEMA
+	,COLLATION_NAME
+	,DOMAIN_CATALOG
+	,DOMAIN_SCHEMA
+	,DOMAIN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS 
+";
+        }
+        public static void ListViews()
+        {
+            string sql = @"
+SELECT 
+	 sch.name AS TABLE_SCHEMA 
+	,v.name AS TABLE_NAME 
+	,m.definition AS VIEW_DEFINITION 
+	,'NO' AS IS_UPDATABLE 
+	,CONVERT(varchar(7), 
+		CASE v.with_check_option  
+			WHEN 1 THEN 'CASCADE'  
+			ELSE 'NONE' 
+		END
+	) AS CHECK_OPTION
+FROM sys.views AS v 
+INNER JOIN sys.schemas AS sch ON sch.schema_id = v.schema_id 
+INNER JOIN sys.sql_modules AS m on m.object_id = v.object_id
+/*
+SELECT 
+	 TABLE_SCHEMA
+	,TABLE_NAME
+	,VIEW_DEFINITION
+	,OBJECT_DEFINITION(OBJECT_ID(TABLE_SCHEMA + '.' + TABLE_NAME)) AS object_defintion 
+	,CHECK_OPTION
+	,IS_UPDATABLE
+FROM INFORMATION_SCHEMA.VIEWS 
+*/
+";
+        }
+
+        public static void ListScalarFunctions() {
+            string sql = @"
+SELECT 
+	 sch.name AS SPECIFIC_SCHEMA 
+	,o.name AS SPECIFIC_NAME 
+
+	,sch.name AS ROUTINE_SCHEMA 
+	,o.name AS ROUTINE_NAME 
+	 
+	,CONVERT(nvarchar(20), 
+		CASE 
+			WHEN o.type IN ('P','PC', 'X')  THEN 'PROCEDURE' 
+			ELSE 'FUNCTION' 
+		END 
+	 ) AS ROUTINE_TYPE 
+	 
+	,m.definition AS ROUTINE_DEFINITION 
+
+
+	,CONVERT(sysname, 
+		CASE  
+			WHEN o.type IN ('TF', 'IF', 'FT') THEN N'TABLE'  
+			ELSE ISNULL(TYPE_NAME(c.system_type_id),  TYPE_NAME(c.user_type_id)) 
+		END
+	 ) AS DATA_TYPE 
+	 
+	,COLUMNPROPERTY(c.object_id, c.name, 'charmaxlen') AS CHARACTER_MAXIMUM_LENGTH 
+	,COLUMNPROPERTY(c.object_id, c.name, 'octetmaxlen') AS CHARACTER_OCTET_LENGTH 
+
+
+	,CONVERT(tinyint, 
+		CASE -- int/decimal/numeric/real/float/money  
+			WHEN c.system_type_id IN (48, 52, 56, 59, 60, 62, 106, 108, 122, 127) THEN c.precision  
+		END
+	 ) AS NUMERIC_PRECISION 
+	 
+	,CONVERT(int, 
+		CASE -- datetime/smalldatetime  
+			WHEN c.system_type_id IN (40, 41, 42, 43, 58, 61) THEN NULL  
+			ELSE ODBCSCALE(c.system_type_id, c.scale) 
+		END
+	) AS NUMERIC_SCALE 
+	 
+	,CONVERT(smallint, 
+		CASE -- datetime/smalldatetime  
+			WHEN c.system_type_id IN (40, 41, 42, 43, 58, 61) THEN ODBCSCALE(c.system_type_id, c.scale) 
+		END
+	 ) AS DATETIME_PRECISION 
+	 
+	,CONVERT(nvarchar(30), 
+		CASE  
+			WHEN o.type IN ('P ', 'FN', 'TF', 'IF') THEN 'SQL'  
+			ELSE 'EXTERNAL' 
+		END
+	) AS ROUTINE_BODY 
+	
+	,CONVERT(nvarchar(10), 
+		CASE 
+			WHEN ObjectProperty(o.object_id, 'IsDeterministic') = 1 THEN 'YES' 
+			ELSE 'NO' 
+		END
+	 ) AS IS_DETERMINISTIC 
+FROM sys.objects AS o 
+LEFT JOIN sys.parameters AS c ON (c.object_id = o.object_id AND c.parameter_id = 0)  
+INNER JOIN sys.schemas AS sch ON sch.schema_id = o.schema_id 
+INNER JOIN sys.sql_modules AS m on m.object_id = o.object_id
+
+  -- AF: Aggregate function (CLR)
+-- WHERE o.type IN (  'AF', )
+-- WHERE o.type IN ('P', 'PC', 'FN', 'TF', 'IF', 'FT', 'AF', 'IS', 'FS')  
+-- P  = SQL Stored Procedure, PC = Assembly (CLR) stored-procedure
+-- P : stored procedure, PC : assembly stored procedure, X : extended stored proc 
+-- WHERE o.type IN ('P','PC', 'X')  -- PROCEDURE 
+-- TF: table function, IF: inline table-valued function, FT: assembly table function
+-- WHERE o.type IN ('TF', 'IF', 'FT') -- N'TABLE'  
+-- FN: scalar function, IS: inline scalar function, FS: assembly scalar function
+-- WHERE o.type IN ('FN', 'IS', 'FS')
+
+-- SELECT * from master..spt_values WHERE type = 'O9T'
+
+/*
+SELECT 
+	 SPECIFIC_SCHEMA
+	,SPECIFIC_NAME
+	,ROUTINE_SCHEMA
+	,ROUTINE_NAME
+	,*
+	,DATA_TYPE
+	,CHARACTER_MAXIMUM_LENGTH
+	,CHARACTER_OCTET_LENGTH
+	,NUMERIC_PRECISION
+	,NUMERIC_SCALE
+	,DATETIME_PRECISION
+	,ROUTINE_BODY
+	,IS_DETERMINISTIC
+FROM INFORMATION_SCHEMA.ROUTINES 
+WHERE ROUTINE_TYPE = 'FUNCTION' 
+AND DATA_TYPE <> 'TABLE' 
+*/
+";
+        }
         public static void ListScalarFunctionArguments() { }
-        
-        
-        
+
+
+
         public static void ListTVFFunctions() { }
-        
+
         public static void ListTVFFunctionsArguments() { }
-        
-        
+
+
         public static void Procedures() { }
-        
-        public static void ProcedureArguments() { }
-        
-        
-        public static void ListTriggers() { }
 
-        
-        
 
-        
+
+        public static void ListParameters()
+        {
+            string sql = @"
+SELECT 
+	 SPECIFIC_SCHEMA
+	,SPECIFIC_NAME
+	,ORDINAL_POSITION
+	,PARAMETER_MODE
+	,IS_RESULT
+	,AS_LOCATOR
+	,PARAMETER_NAME
+	,DATA_TYPE
+	,CHARACTER_MAXIMUM_LENGTH
+	,CHARACTER_OCTET_LENGTH
+	,COLLATION_CATALOG
+	,COLLATION_SCHEMA
+	,COLLATION_NAME
+	,CHARACTER_SET_CATALOG
+	,CHARACTER_SET_SCHEMA
+	,CHARACTER_SET_NAME
+	,NUMERIC_PRECISION
+	,NUMERIC_PRECISION_RADIX
+	,NUMERIC_SCALE
+	,DATETIME_PRECISION
+	,INTERVAL_TYPE
+	,INTERVAL_PRECISION
+	,USER_DEFINED_TYPE_CATALOG
+	,USER_DEFINED_TYPE_SCHEMA
+	,USER_DEFINED_TYPE_NAME
+	,SCOPE_CATALOG
+	,SCOPE_SCHEMA
+	,SCOPE_NAME 
+FROM INFORMATION_SCHEMA.PARAMETERS 
+";
+        }
+
+
+
+        public static void ListTvfColumns() {
+            string sql = @"
+
+SELECT 
+	 TABLE_NAME
+	,COLUMN_NAME
+	,ORDINAL_POSITION
+	,COLUMN_DEFAULT
+	,IS_NULLABLE
+	,DATA_TYPE
+	,CHARACTER_MAXIMUM_LENGTH
+	,CHARACTER_OCTET_LENGTH
+	,NUMERIC_PRECISION
+	,NUMERIC_PRECISION_RADIX
+	,NUMERIC_SCALE
+	,DATETIME_PRECISION
+	,CHARACTER_SET_CATALOG
+	,CHARACTER_SET_SCHEMA
+	,CHARACTER_SET_NAME
+	,COLLATION_CATALOG
+	,COLLATION_SCHEMA
+	,COLLATION_NAME
+	,DOMAIN_CATALOG
+	,DOMAIN_SCHEMA
+	,DOMAIN_NAME
+FROM INFORMATION_SCHEMA.ROUTINE_COLUMNS 
+";
+        }
+
+
+
+
+        public static void ListTriggers() {
+            string sql = @"
+SELECT 
+     sch.name AS trigger_table_schema 
+    ,systbl.name AS trigger_table_name 
+    ,systrg.name AS trigger_name 
+    ,sysm.definition AS trigger_definition 
+    ,systrg.is_instead_of_trigger
+
+
+
+    -- https://stackoverflow.com/questions/5340638/difference-between-a-for-and-after-triggers
+    -- Difference between a FOR and AFTER triggers?
+    -- CREATE TRIGGER trgTable on dbo.Table FOR INSERT,UPDATE,DELETE
+    -- Is the same as
+    -- CREATE TRIGGER trgTable on dbo.Table AFTER INSERT,UPDATE,DELETE
+    -- An INSTEAD OF trigger is different, and fires before and instead of the insert 
+    -- and can be used on views, in order to insert the appropriate values into the underlying tables.
+    -- AFTER specifies that the DML trigger is fired only when all operations 
+    -- specified in the triggering SQL statement have executed successfully. 
+    -- All referential cascade actions and constraint checks also must succeed before this trigger fires. 
+    -- AFTER is the default when FOR is the only keyword specified.
+    ,CASE WHEN systrg.is_instead_of_trigger = 1 THEN 0 ELSE 1 END AS is_after_trigger 
+
+    ,systrg.is_not_for_replication 
+    ,systrg.is_disabled
+    ,systrg.create_date 
+    ,systrg.modify_date
+
+    ,CASE WHEN systrg.parent_class = 1 THEN 'TABLE' WHEN systrg.parent_class = 0 THEN 'DATABASE' END trigger_class 
+
+
+    ,CASE 
+        WHEN systrg.[type] = 'TA' then 'Assembly (CLR) trigger'
+        WHEN systrg.[type] = 'TR' then 'SQL trigger' 
+        ELSE '' 
+    END AS trigger_type 
+
+    -- https://dataedo.com/kb/query/sql-server/list-triggers 
+    -- ,(CASE WHEN objectproperty(systrg.object_id, 'ExecIsUpdateTrigger') = 1
+    --      THEN 'UPDATE ' ELSE '' END 
+    -- + CASE WHEN objectproperty(systrg.object_id, 'ExecIsDeleteTrigger') = 1
+    --      THEN 'DELETE ' ELSE '' END
+    -- + CASE WHEN objectproperty(systrg.object_id, 'ExecIsInsertTrigger') = 1
+    --      THEN 'INSERT' ELSE '' END
+    -- ) AS trigger_event 
+
+    ,
+    ( 
+        STUFF 
+        ( 
+            ( 
+                SELECT 
+                    ', ' + type_desc AS [text()]
+                    -- STRING_AGG(type_desc, ', ') AS foo 
+                FROM sys.events AS syse 
+                WHERE syse.object_id = systrg.object_id
+                FOR XML PATH(''), TYPE 
+                -- GROUP BY syse.object_id 
+            ).value('.[1]', 'nvarchar(MAX)') 
+            , 1, 2, '' 
+        ) 
+    ) AS trigger_event_groups 
+
+    -- ,CASE WHEN systrg.parent_class = 1 THEN 'TABLE' WHEN systrg.parent_class = 0 THEN 'DATABASE' END trigger_class  
+
+    ,'DROP TRIGGER ""' + sch.name + '"".""' + systrg.name + '""; ' AS sql 
+    -- ,systrg.*
+FROM sys.triggers AS systrg 
+
+LEFT JOIN sys.sql_modules AS sysm 
+    ON sysm.object_id = systrg.object_id 
+
+-- sys.objects for view triggers 
+-- LEFT JOIN sys.objects AS systbl ON systbl.object_id = systrg.object_id 
+
+-- INNER JOIN if you only want table-triggers 
+LEFT JOIN sys.tables AS systbl ON systbl.object_id = systrg.parent_id 
+-- INNER JOIN sys.views AS systbl ON systbl.object_id = systrg.parent_id 
+
+
+LEFT JOIN sys.schemas AS sch 
+    ON sch.schema_id = systbl.schema_id 
+
+WHERE (1=1) 
+
+-- AND sch.name IS NOT NULL 
+-- AND sch.name IS NULL 
+-- AND sch.name = 'dbo' 
+-- And here, exclude some triggers with a certain naming schema 
+/*  
+AND 
+(
+    -- systbl.name IS NULL 
+    -- OR 
+    NOT 
+    (
+        systrg.name = 'TRG_' + systbl.name  + '_INSERT_History'
+        OR 
+        systrg.name = 'TRG_' + systbl.name  + '_UPDATE_History'
+        OR 
+        systrg.name = 'TRG_' + systbl.name  + '_DELETE_History'
+    )
+)
+*/
+
+ORDER BY 
+     sch.name 
+    ,systbl.name 
+    ,systrg.name 
+";
+        }
+
+
+
         public static void ListIndices() { }
+
+
         public static void ListUniqueConstrains() { }
-        public static void ListCheckConstrains() { }
-        
-        
+
+
+        public static void ListCheckConstrains() {
+            string sql = @"
+SELECT 
+	 con.name AS CONSTRAINT_NAME 
+	,sch.name AS CONSTRAINT_SCHEMA 
+	,t.name AS CONSTRAINT_TABLE 
+	,col.name AS CONSTRAINT_COLUMN_NAME 
+	,con.definition AS CONSTRAINT_DEFINITION 
+	,CASE 
+		WHEN con.is_disabled = 0
+			THEN 'Active'
+		ELSE 'Disabled'
+	 END AS CONSTRAINT_STATUS 
+	,N'ALTER TABLE ' + QUOTENAME(sch.name) + N'.' + QUOTENAME(t.name) + N' 
+ADD CONSTRAINT ' + QUOTENAME(con.name) + N'
+  CHECK (' + con.definition + '); ' AS SqlCreateCheck 
+FROM sys.check_constraints AS con 
+LEFT JOIN sys.objects AS t ON con.parent_object_id = t.object_id
+LEFT JOIN sys.schemas AS sch ON sch.schema_id = t.schema_id 
+LEFT JOIN sys.all_columns AS col 
+	ON con.parent_column_id = col.column_id
+	AND con.parent_object_id = col.object_id
+
+ORDER BY 
+	 con.name 
+	,CONSTRAINT_SCHEMA 
+	,CONSTRAINT_TABLE 
+";
+        }
+
+
     }
 
 
@@ -195,7 +602,7 @@ namespace SchemaPorter
                 System.Console.WriteLine(ex.Message);
             }
         }
-    
+
 
         public static void Main(string[] args)
         {
@@ -235,12 +642,12 @@ namespace SchemaPorter
                 System.Console.WriteLine(seg.Start);
                 System.Console.WriteLine(seg.End);
             }
-            
-            
+
+
         } // End Sub Main 
-        
-        
+
+
     } // End Class Program 
-    
-    
+
+
 } // End Namespace SchemaPorter 

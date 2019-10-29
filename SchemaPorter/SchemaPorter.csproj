@@ -14,11 +14,15 @@
     <None Remove="SQL\columns.sql" />
     <None Remove="SQL\indices.sql" />
     <None Remove="SQL\primary_keys.sql" />
+    <None Remove="SQL\Schema\CreateDummyRoutines.sql" />
+    <None Remove="SQL\Schema\CreateUserDefinedTypes.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SQL\columns.sql" />
     <EmbeddedResource Include="SQL\indices.sql" />
     <EmbeddedResource Include="SQL\primary_keys.sql" />
+    <EmbeddedResource Include="SQL\Schema\CreateUserDefinedTypes.sql" />
+    <EmbeddedResource Include="SQL\Schema\CreateDummyRoutines.sql" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.9.0" />
