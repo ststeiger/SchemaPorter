@@ -7,6 +7,73 @@ namespace SchemaPorter
 {
 
 
+    public class DbDiff
+    {
+        // schemas
+        // tables column, pk, fk, uc, uix, 
+        // views, procedures, scalar_functions, table_functions, triggers, indices, 
+        
+        // hashset tables
+        // dictionary table-hashset columns
+        // dictionary table-columns
+        // dictionary table-columns-properties
+        // dictionary table-computed columns
+        // dictionary table-non-computed columns
+        
+        // hashset views
+        // dictionary view-hashset columns
+        // dictionary views-columns
+        // dictionary views tables
+        // dictionary views dependencies
+        // dictionary views tables
+        // dictionary views scalar functions
+        // dictionary views table functions
+        
+        
+        
+        
+        
+        public static void ListUserDefinedTypes() { }
+
+        public static void ListAssemblies() { }
+
+        
+        public static void ListTables() { }
+        public static void ListColumns() { }
+        public static void ListViews() { }
+        
+        public static void ListScalarFunctions() { }
+        public static void ListScalarFunctionArguments() { }
+        
+        
+        
+        public static void ListTVFFunctions() { }
+        
+        public static void ListTVFFunctionsArguments() { }
+        
+        
+        public static void Procedures() { }
+        
+        public static void ProcedureArguments() { }
+        
+        
+        public static void ListTriggers() { }
+
+        
+        
+
+        
+        public static void ListIndices() { }
+        public static void ListUniqueConstrains() { }
+        public static void ListCheckConstrains() { }
+        
+        
+    }
+
+
+
+
+
     public static class Program
     {
 
