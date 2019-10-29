@@ -14,6 +14,7 @@
     <None Remove="SQL\columns.sql" />
     <None Remove="SQL\indices.sql" />
     <None Remove="SQL\primary_keys.sql" />
+    <None Remove="SQL\Schema\CreateCheckConstraints.sql" />
     <None Remove="SQL\Schema\CreateDummyRoutines.sql" />
     <None Remove="SQL\Schema\CreateUserDefinedTypes.sql" />
   </ItemGroup>
@@ -21,6 +22,7 @@
     <EmbeddedResource Include="SQL\columns.sql" />
     <EmbeddedResource Include="SQL\indices.sql" />
     <EmbeddedResource Include="SQL\primary_keys.sql" />
+    <EmbeddedResource Include="SQL\Schema\CreateCheckConstraints.sql" />
     <EmbeddedResource Include="SQL\Schema\CreateUserDefinedTypes.sql" />
     <EmbeddedResource Include="SQL\Schema\CreateDummyRoutines.sql" />
   </ItemGroup>
