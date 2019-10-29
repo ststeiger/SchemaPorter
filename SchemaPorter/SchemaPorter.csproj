@@ -33,6 +33,7 @@
     <EmbeddedResource Include="SQL\Schema\CreateCheckConstraints.sql" />
     <EmbeddedResource Include="SQL\Schema\CreateUniqueConstraintsAndIndices.sql" />
     <EmbeddedResource Include="SQL\Schema\Index_Create.sql" />
+    <EmbeddedResource Include="SQL\Schema\List?Triggers.sql" />
     <EmbeddedResource Include="SQL\Schema\Missing_indices.sql" />
     <EmbeddedResource Include="SQL\Schema\Indices_Drop.sql" />
     <EmbeddedResource Include="SQL\Schema\CreateUserDefinedTypes.sql" />

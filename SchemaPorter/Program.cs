@@ -30,7 +30,186 @@ namespace SchemaPorter
         // dictionary views table functions
 
 
+        public static void ListDbs()
+        {
+	        string sql = @"
+SELECT 
+     sch.name AS TABLE_SCHEMA  
+    ,tables.name AS TABLE_NAME 
+    ,sc.name AS COLUMN_NAME 
+    -- ,sc.column_id AS ORDINAL_POSITION 
+    ,COLUMNPROPERTY(sc.object_id, sc.name, 'ordinal') AS ORDINAL_POSITION 
+    -- ,sm.text AS COLUMN_DEFAULT 
+    ,CASE WHEN sc.is_nullable = 1 THEN 'YES' ELSE 'NO' END AS IS_NULLABLE 
+    ,t.name AS DATA_TYPE  
+    ,sc.is_identity 
+    ,sc.is_computed AS IS_COMPUTED 
+    ,col.is_persisted AS IS_PERSISTED 
+        
+    ,col.""definition"" AS COMPUTATION  
+    ,COLUMNPROPERTY(sc.object_id, sc.name, 'charmaxlen') AS CHARACTER_MAXIMUM_LENGTH 
+    ,COLUMNPROPERTY(sc.object_id, sc.name, 'octetmaxlen') AS CHARACTER_OCTET_LENGTH 
+    
+    ,CONVERT(tinyint, CASE -- int/decimal/numeric/real/float/money  
+        WHEN sc.system_type_id IN (48, 52, 56, 59, 60, 62, 106, 108, 122, 127) THEN sc.precision  
+        END) AS NUMERIC_PRECISION 
 
+    ,CONVERT(int, CASE -- datetime/smalldatetime  
+        WHEN sc.system_type_id IN (40, 41, 42, 43, 58, 61) THEN NULL  
+        ELSE ODBCSCALE(sc.system_type_id, sc.scale) 
+        END) AS NUMERIC_SCALE 
+        
+    ,CONVERT(smallint, CASE -- datetime/smalldatetime  
+        WHEN sc.system_type_id IN (40, 41, 42, 43, 58, 61) 
+        THEN ODBCSCALE(sc.system_type_id, sc.scale) 
+    END) AS DATETIME_PRECISION 
+
+    ,
+    t.name 
+    + 
+    CASE 
+        WHEN t.name IN ('char', 'varchar', 'nchar', 'nvarchar', 'binary', 'varbinary') 
+            THEN '(' 
+                + 
+                CASE WHEN sc.max_length = -1 THEN 'MAX'
+                    ELSE CONVERT
+                        (
+                                varchar(4)
+                            ,CASE WHEN t.name IN ('nchar', 'nvarchar') THEN sc.max_length/2 ELSE sc.max_length END 
+                        )
+                END 
+                + ')' 
+        WHEN t.name IN ('decimal', 'numeric')
+            THEN '(' + CONVERT(varchar(4), sc.precision)+', ' + CONVERT(varchar(4), sc.Scale) + ')'
+        WHEN t.name IN ('time', 'datetime2', 'datetimeoffset') 
+            THEN N'(' + CAST(ODBCSCALE(sc.system_type_id, sc.scale) AS national character varying(36)) + N')' 
+        ELSE '' 
+    END AS DDL_NAME  
+
+    ,dc.name 
+    ,dc.definition 
+    -- ,sc.is_filestream 
+    -- ,sc.is_identity 
+    -- ,sc.is_sparse 
+FROM sys.columns AS sc 
+-- INNER JOIN sys.objects AS o ON o.object_id = sc.object_id 
+INNER JOIN sys.tables AS tables ON sc.object_id = tables.object_id 
+INNER JOIN sys.schemas AS sch ON sch.schema_id = tables.schema_id 
+LEFT JOIN sys.computed_columns AS col ON col.object_id = sc.object_id AND col.column_id = sc.column_id 
+INNER JOIN sys.types AS t ON sc.user_type_id = t.user_type_id 
+LEFT JOIN sys.syscomments AS sm ON sm.id = sc.default_object_id
+
+LEFT JOIN sys.default_constraints AS dc  
+    ON dc.parent_object_id = tables.object_id  
+    AND dc.parent_column_id = sc.object_id 
+    
+LEFT JOIN 
+    (
+            SELECt 
+                    1 AS tbl_id
+                ,sch.name AS table_schema
+                ,tables.name AS table_name 
+                ,sch.schema_id 
+                ,tables.object_id 
+            FROM sys.tables AS tables -- ON sc.object_id = tables.object_id 
+            INNER JOIN sys.schemas AS sch ON sch.schema_id = tables.schema_id 
+            INNER JOIN sys.extended_properties AS xp ON xp.major_id = tables.object_id AND xp.minor_id = 0 
+            AND xp.name = 'microsoft_database_tools_support' 
+            GROUP BY sch.schema_id, sch.name, tables.object_id, tables.name 
+    ) AS systemTables 
+    ON systemTables.schema_id = sch.schema_id  
+    AND systemTables.object_id = tables.object_id  
+
+WHERE (1=1) -- 12'846
+AND tables.is_ms_shipped = 0 -- 12'839 
+AND systemTables.tbl_id IS NULL --12'834
+
+
+-- schemas1
+-- schema2
+
+-- tables1
+-- tables2
+
+-- columns1
+-- columns2
+
+-- defaults
+
+-- primary keys 
+-- foreign keys
+
+-- views1
+-- views2
+
+-- functions1
+-- functions2
+
+-- tvf1
+-- tvf2 
+
+-- stored_procedures1
+-- stored_procedures2
+
+
+-- indices
+-- unique indices
+-- unique constraints
+-- check constraints
+
+-- assemblies1
+-- assemblies2
+
+
+-- version
+	
+
+-- https://www.sqlshack.com/sql-server-system-databases-the-master-database/
+-- https://dba.stackexchange.com/questions/213494/how-to-locate-resource-system-database-in-ms-sql-server
+SELECT 
+     sysdb.name
+    ,sysdb.compatibility_level
+    ,sysdb.owner_sid 
+    ,sysdb.collation_name 
+    ,sysdb.snapshot_isolation_state
+    ,sysdb.is_fulltext_enabled
+    ,sysdb.state_desc -- = N'ONLINE'            -- is online
+    ,sysdb.user_access_desc -- = N'MULTI_USER'  -- open for all users
+    ,sysdb.is_read_only -- = 0 -- not read-only
+
+    ,CAST
+    (
+        CASE 
+            -- ReportServer, ReportServerTempDB
+            WHEN sysdb.name in ('master','model','msdb','tempdb') THEN 1 
+            WHEN sysdb.database_id BETWEEN 1 AND 4 THEN 1 -- master, tempdb, model, and msdb
+            WHEN sysdb.name LIKE 'ReportServer$%' THEN 1 -- Report Server
+            ELSE sysdb.is_distributor 
+        END 
+        AS bit
+    ) AS IsSystemDatabase 
+FROM sys.databases AS sysdb
+-- WHERE name = 'WideWorldImporters';
+
+-- SELECT * FROM sys.views 
+
+-- SELECT * FROM sys.tables 
+-- SELECT * FROM sys.procedures 
+
+
+
+
+SELECT *
+FROM sys.objects
+WHERE type IN (N'FN', N'IF', N'TF', N'FS', N'FT')  -- FN: scalar, IF: inline table-valued, TF: table-valued, FS: Assembly (CLR) scalar-function, FT: Assembly (CLR) table-valued function
+
+SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = 'FUNCTION'
+
+SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE NOT IN ( 'FUNCTION', 'PROCEDURE')
+
+";
+
+        }
 
 
         public static void ListUserDefinedTypes() { }
