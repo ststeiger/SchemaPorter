@@ -1,7 +1,6 @@
 ﻿
 // https://andrewlock.net/creating-a-custom-iconfigurationprovider-in-asp-net-core-to-parse-yaml/
 
-using System.Collections.Generic;
 
 namespace SchemaPorter
 {
@@ -28,6 +27,38 @@ namespace SchemaPorter
         // dictionary views tables
         // dictionary views scalar functions
         // dictionary views table functions
+        public static void NullabilityCorrect()
+        {
+            string sql = @"
+
+";
+        }
+
+
+
+            public static void ListCLR()
+        {
+            string sql = @"
+SELECT 
+	(
+		SELECT value FROM sys.dm_clr_properties
+		WHERE name = 'version' 
+	) AS version 
+
+	,
+	(
+		SELECT value FROM sys.dm_clr_properties
+		WHERE name = 'state' 
+	) AS state 
+
+	,
+	(
+		SELECT value FROM sys.dm_clr_properties
+		WHERE name = 'directory' 
+	) AS directory 
+";
+        }
+
 
 
         public static void ListDbs()
@@ -218,34 +249,51 @@ SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE NOT IN ( 'FUNCTION'
         {
             string sql = @"
 SELECT 
-	 name
-	,clr_name
-	,permission_set_desc
-FROM sys.assemblies
+	 sysa.name 
+	,sysa.clr_name 
+	,sysa.permission_set_desc 
+FROM sys.assemblies AS sysa 
 ";
         }
         public static void ListDatabases()
         {
             string sql = @"
 SELECT 
-	 name
-	,compatibility_level
-	,user_access_desc
-	,state_desc
-	,is_read_only
-	,snapshot_isolation_state_desc
-	,recovery_model_desc
-	,is_quoted_identifier_on
-	,is_fulltext_enabled
-	,is_trustworthy_on
-FROM sys.databases 
+	 sysdb.name
+	,sysdb.compatibility_level
+	,sysdb.user_access_desc
+	,sysdb.state_desc
+	,sysdb.is_read_only
+	,sysdb.snapshot_isolation_state_desc
+	,sysdb.recovery_model_desc
+	,sysdb.is_quoted_identifier_on
+	,sysdb.is_fulltext_enabled
+	,sysdb.is_trustworthy_on
+FROM sys.databases AS sysdb 
+WHERE sysdb.name = 'AspNetDB' 
+
 ";
         }
 
 
         public static void ListSchemas()
         {
-            string sql = @"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA";
+            string sql = @"
+-- Owner: SELECT name FROM sys.database_principals 
+SELECT 
+	  SCHEMA_NAME 
+	 ,SCHEMA_OWNER 
+	,N'IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ''' + REPLACE(SCHEMA_NAME, N'''', N'''''') + N''' ) 
+EXECUTE(''CREATE SCHEMA ' + QUOTENAME(REPLACE(SCHEMA_NAME, N'''', N'''''')) 
+-- + N' AUTHORIZATION ' + QUOTENAME(REPLACE(SCHEMA_OWNER, N'''', N'''''')) 
++ N';'');'   
++ N'; ' AS cmdCreate 
+	 
+	,N'IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ''' + REPLACE(SCHEMA_NAME, N'''', N'''''') + N''' ) 
+DROP SCHEMA ' + QUOTENAME(SCHEMA_NAME) + N'; ' AS cmdDrop 
+FROM INFORMATION_SCHEMA.SCHEMATA 
+WHERE SCHEMA_NAME <> SCHEMA_OWNER 
+";
         }
         public static void ListTables()
         {
@@ -320,115 +368,35 @@ FROM INFORMATION_SCHEMA.VIEWS
 
         public static void ListScalarFunctions() {
             string sql = @"
-SELECT 
-	 sch.name AS SPECIFIC_SCHEMA 
-	,o.name AS SPECIFIC_NAME 
 
-	,sch.name AS ROUTINE_SCHEMA 
-	,o.name AS ROUTINE_NAME 
-	 
-	,CONVERT(nvarchar(20), 
-		CASE 
-			WHEN o.type IN ('P','PC', 'X')  THEN 'PROCEDURE' 
-			ELSE 'FUNCTION' 
-		END 
-	 ) AS ROUTINE_TYPE 
-	 
-	,m.definition AS ROUTINE_DEFINITION 
-
-
-	,CONVERT(sysname, 
-		CASE  
-			WHEN o.type IN ('TF', 'IF', 'FT') THEN N'TABLE'  
-			ELSE ISNULL(TYPE_NAME(c.system_type_id),  TYPE_NAME(c.user_type_id)) 
-		END
-	 ) AS DATA_TYPE 
-	 
-	,COLUMNPROPERTY(c.object_id, c.name, 'charmaxlen') AS CHARACTER_MAXIMUM_LENGTH 
-	,COLUMNPROPERTY(c.object_id, c.name, 'octetmaxlen') AS CHARACTER_OCTET_LENGTH 
-
-
-	,CONVERT(tinyint, 
-		CASE -- int/decimal/numeric/real/float/money  
-			WHEN c.system_type_id IN (48, 52, 56, 59, 60, 62, 106, 108, 122, 127) THEN c.precision  
-		END
-	 ) AS NUMERIC_PRECISION 
-	 
-	,CONVERT(int, 
-		CASE -- datetime/smalldatetime  
-			WHEN c.system_type_id IN (40, 41, 42, 43, 58, 61) THEN NULL  
-			ELSE ODBCSCALE(c.system_type_id, c.scale) 
-		END
-	) AS NUMERIC_SCALE 
-	 
-	,CONVERT(smallint, 
-		CASE -- datetime/smalldatetime  
-			WHEN c.system_type_id IN (40, 41, 42, 43, 58, 61) THEN ODBCSCALE(c.system_type_id, c.scale) 
-		END
-	 ) AS DATETIME_PRECISION 
-	 
-	,CONVERT(nvarchar(30), 
-		CASE  
-			WHEN o.type IN ('P ', 'FN', 'TF', 'IF') THEN 'SQL'  
-			ELSE 'EXTERNAL' 
-		END
-	) AS ROUTINE_BODY 
-	
-	,CONVERT(nvarchar(10), 
-		CASE 
-			WHEN ObjectProperty(o.object_id, 'IsDeterministic') = 1 THEN 'YES' 
-			ELSE 'NO' 
-		END
-	 ) AS IS_DETERMINISTIC 
-FROM sys.objects AS o 
-LEFT JOIN sys.parameters AS c ON (c.object_id = o.object_id AND c.parameter_id = 0)  
-INNER JOIN sys.schemas AS sch ON sch.schema_id = o.schema_id 
-INNER JOIN sys.sql_modules AS m on m.object_id = o.object_id
-
-  -- AF: Aggregate function (CLR)
--- WHERE o.type IN (  'AF', )
--- WHERE o.type IN ('P', 'PC', 'FN', 'TF', 'IF', 'FT', 'AF', 'IS', 'FS')  
--- P  = SQL Stored Procedure, PC = Assembly (CLR) stored-procedure
--- P : stored procedure, PC : assembly stored procedure, X : extended stored proc 
--- WHERE o.type IN ('P','PC', 'X')  -- PROCEDURE 
--- TF: table function, IF: inline table-valued function, FT: assembly table function
--- WHERE o.type IN ('TF', 'IF', 'FT') -- N'TABLE'  
--- FN: scalar function, IS: inline scalar function, FS: assembly scalar function
--- WHERE o.type IN ('FN', 'IS', 'FS')
-
--- SELECT * from master..spt_values WHERE type = 'O9T'
-
-/*
-SELECT 
-	 SPECIFIC_SCHEMA
-	,SPECIFIC_NAME
-	,ROUTINE_SCHEMA
-	,ROUTINE_NAME
-	,*
-	,DATA_TYPE
-	,CHARACTER_MAXIMUM_LENGTH
-	,CHARACTER_OCTET_LENGTH
-	,NUMERIC_PRECISION
-	,NUMERIC_SCALE
-	,DATETIME_PRECISION
-	,ROUTINE_BODY
-	,IS_DETERMINISTIC
-FROM INFORMATION_SCHEMA.ROUTINES 
-WHERE ROUTINE_TYPE = 'FUNCTION' 
-AND DATA_TYPE <> 'TABLE' 
-*/
 ";
         }
         public static void ListScalarFunctionArguments() { }
 
 
 
-        public static void ListTVFFunctions() { }
+        public static void ListTVFFunctions() {
+            ListRoutinesByType(RoutineEnum_t.All_Table_Functions);
+        }
 
         public static void ListTVFFunctionsArguments() { }
 
 
-        public static void Procedures() { }
+        public static void Procedures()
+        {
+            ListRoutinesByType(RoutineEnum_t.All_Procedures);
+
+        }
+        public static void ListRoutines()
+        {
+            ListRoutinesByType(RoutineEnum_t.All_Routines);
+
+        }
+
+        public static void ListRoutinesByType(RoutineEnum_t routineType) 
+        {
+            string sql = @"ListRoutinesByType.sql";
+        }
 
 
 
@@ -617,10 +585,16 @@ ORDER BY
 
 
 
-        public static void ListIndices() { }
+        public static void ListIndices()
+        {
+            string sql = "Index_Create.sql";
+
+        }
 
 
-        public static void ListUniqueConstrains() { }
+        public static void ListUniqueConstrains() {
+            string sql = "CreateUniqueConstraints.sql";
+        }
 
 
         public static void ListCheckConstrains() {
@@ -676,7 +650,7 @@ ORDER BY
                 Microsoft.Win32.RegistryKey subkey = key.OpenSubKey(subkeyName);
                 if (subkey != null)
                 {
-                    foreach (var value in subkey.GetValueNames())
+                    foreach (string value in subkey.GetValueNames())
                     {
                         System.Console.WriteLine("\tValue:" + value);
 
@@ -712,7 +686,7 @@ ORDER BY
 
         public static void TestStack()
         {
-            System.Collections.Generic.Stack<string> stack = new Stack<string>();
+            System.Collections.Generic.Stack<string> stack = new System.Collections.Generic.Stack<string>();
             string isEmpty = stack.Peek();
             stack.Push("abc");
             string abc = stack.Pop();
@@ -812,8 +786,8 @@ ORDER BY
             // Another way: https://github.com/thinksquirrel/nanosvg-csharp
             string d = @"M3.726 91.397h9.349v-17.64H3.726zM18.19 79.578l4.41-4.056 4.41 4.056v3l-3.175-3.176v8.82h-2.293v-8.82l-3.352 3.175zM35.83 78.344h.175l.177-.177H36.71v-.176h.176l.177-.176h.176v-.177l.177-.176.176-.177v-.352h.176V76.05l-.176-.177v-.352h-.176v-.177h-.177v-.176l-.176-.177h-.177l-.176-.176h-.176v-.176h-1.412l-.176.176h-.176l-.177.176h-.176v.177h-.176v.176h-.177v.353h-.176V77.109l.176.176v.177h.177v.176l.176.177h.176v.176h.177l.176.176h.353l.176.177h.177z";
 
-            // var cp1 = new Svg.CoordinateParser(d);
-            var segmentList = Svg.SvgPathBuilder.Parse(d);
+            // Svg.CoordinateParser cp1 = new Svg.CoordinateParser(d);
+            Svg.Pathing.SvgPathSegmentList segmentList = Svg.SvgPathBuilder.Parse(d);
             System.Console.WriteLine(segmentList);
 
             foreach (Svg.Pathing.SvgPathSegment seg in segmentList)

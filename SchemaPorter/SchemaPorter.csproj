@@ -14,6 +14,10 @@
     <None Remove="SQL\columns.sql" />
     <None Remove="SQL\indices.sql" />
     <None Remove="SQL\primary_keys.sql" />
+    <None Remove="SQL\Schema\2\GetDataTypeName.sql" />
+    <None Remove="SQL\Schema\2\ListTypeDescriptions.sql" />
+    <None Remove="SQL\Schema\2\List_system_functions.sql" />
+    <None Remove="SQL\Schema\2\TypeDilemma.sql" />
     <None Remove="SQL\Schema\CreateCheckConstraints.sql" />
     <None Remove="SQL\Schema\CreateDefaultConstraints.sql" />
     <None Remove="SQL\Schema\CreateDummyRoutines.sql" />
@@ -22,18 +26,30 @@
     <None Remove="SQL\Schema\CreateUserDefinedTypes.sql" />
     <None Remove="SQL\Schema\Index_Create.sql" />
     <None Remove="SQL\Schema\Indices_Drop.sql" />
+    <None Remove="SQL\Schema\ListRoutinesByType-EarlyVersion.sql" />
+    <None Remove="SQL\Schema\ListRoutinesByType.sql" />
+    <None Remove="SQL\Schema\List_Column_Create.sql" />
+    <None Remove="SQL\Schema\List_Extended_Properties.sql" />
     <None Remove="SQL\Schema\Missing_indices.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SQL\columns.sql" />
     <EmbeddedResource Include="SQL\indices.sql" />
     <EmbeddedResource Include="SQL\primary_keys.sql" />
+    <EmbeddedResource Include="SQL\Schema\2\GetDataTypeName.sql" />
+    <EmbeddedResource Include="SQL\Schema\2\TypeDilemma.sql" />
+    <EmbeddedResource Include="SQL\Schema\2\ListTypeDescriptions.sql" />
+    <EmbeddedResource Include="SQL\Schema\2\List_system_functions.sql" />
     <EmbeddedResource Include="SQL\Schema\CreateDefaultConstraints.sql" />
     <EmbeddedResource Include="SQL\Schema\CreateUniqueConstraints.sql" />
     <EmbeddedResource Include="SQL\Schema\CreateCheckConstraints.sql" />
     <EmbeddedResource Include="SQL\Schema\CreateUniqueConstraintsAndIndices.sql" />
     <EmbeddedResource Include="SQL\Schema\Index_Create.sql" />
     <EmbeddedResource Include="SQL\Schema\List?Triggers.sql" />
+    <EmbeddedResource Include="SQL\Schema\ListRoutinesByType-EarlyVersion.sql" />
+    <EmbeddedResource Include="SQL\Schema\List_Extended_Properties.sql" />
+    <EmbeddedResource Include="SQL\Schema\List_Column_Create.sql" />
+    <EmbeddedResource Include="SQL\Schema\ListRoutinesByType.sql" />
     <EmbeddedResource Include="SQL\Schema\Missing_indices.sql" />
     <EmbeddedResource Include="SQL\Schema\Indices_Drop.sql" />
     <EmbeddedResource Include="SQL\Schema\CreateUserDefinedTypes.sql" />

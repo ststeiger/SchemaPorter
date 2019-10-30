@@ -4,6 +4,30 @@ using System.Collections.Generic;
 
 namespace SchemaPorter
 {
+    public enum RoutineEnum_t : int
+    {
+         All_Routines = 0
+
+        ,All_Functions = 1
+        ,All_SQL_Functions = 2
+        ,All_CLR_Functions = 4
+        ,All_Aggregate_Functions = 8 
+
+        ,All_Table_Functions = 16
+        ,All_SQL_Table_Functions = 32
+        ,All_CLR_Table_Functions = 64
+
+        ,ALL_scalar_Functions = 128
+        ,All_SQL_scalar_Functions = 256
+        ,All_CLR_scalar_Functions = 512
+
+        ,All_Procedures = 1024
+        ,All_SQL_Procedures = 2048
+        ,All_CLR_Procedures = 4096
+        ,All_Extended_Procedures = 8192 
+    }
+
+
     public class DataStructures
     {
         

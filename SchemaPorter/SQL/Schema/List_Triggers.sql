@@ -4,10 +4,8 @@ SELECT
     ,systbl.name AS trigger_table_name 
     ,systrg.name AS trigger_name 
     ,sysm.definition AS trigger_definition 
-    ,systrg.is_instead_of_trigger
-
-
-
+    ,systrg.is_instead_of_trigger 
+	 
     -- https://stackoverflow.com/questions/5340638/difference-between-a-for-and-after-triggers
     -- Difference between a FOR and AFTER triggers?
     -- CREATE TRIGGER trgTable on dbo.Table FOR INSERT,UPDATE,DELETE

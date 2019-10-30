@@ -38,7 +38,25 @@ LEFT JOIN sys.columns AS col
 	ON col.column_id = dc.parent_column_id 
 	AND col.object_id = dc.parent_object_id 
 
-WHERE (1=1) 
+WHERE (1=1)
+
+/* 
+-- simpler, but slower: 
+AND 
+(
+	t.is_ms_shipped = 0  
+	AND 
+	( 
+		SELECT ep.major_id 
+		FROM sys.extended_properties AS ep 
+		WHERE ep.major_id = t.object_id 
+		AND ep.minor_id = 0 
+		AND ep.class = 1 
+		AND ep.name = N'microsoft_database_tools_support' 
+	) IS NULL 
+) 
+*/
+
 AND 
 (
 	CAST
