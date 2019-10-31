@@ -268,6 +268,30 @@ SELECT
 	,sysa.permission_set_desc 
 FROM sys.assemblies AS sysa 
 ";
+
+            string sql2 = @"
+
+SELECT * FROM sys.assembly_types
+
+SELECT * FROM sys.assembly_files 
+
+SELECT * FROM sys.assemblies 
+
+
+SELECT * FROM sys.module_assembly_usages 
+
+SELECT * FROM sys.server_assembly_modules  
+
+
+SELECT * FROM sys.assembly_modules
+
+SELECT * FROM sys.type_assembly_usages 
+
+SELECT * FROM sys.assembly_references 
+
+";
+
+
         }
         public static void ListDatabases()
         {
