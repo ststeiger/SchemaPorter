@@ -249,13 +249,13 @@ SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE NOT IN ( 'FUNCTION'
 	        // https://stackoverflow.com/questions/11231614/how-can-i-get-dapper-to-map-net-datetime-to-datetime2
 	        // https://docs.microsoft.com/en-us/sql/t-sql/data-types/datetimeoffset-transact-sql?view=sql-server-ver15
 	        // https://docs.microsoft.com/en-us/dotnet/standard/datetime/choosing-between-datetime
-
+	        
 	        string timeString = "05:27:30.22";
 	        string[] timeParts = timeString.Split(':');
 	        System.Array.Reverse(timeParts);
 	        string[] secondPars = timeParts[0].Split('.');
 	        
-	        System.Math.Sign(123):
+	        System.Math.Sign(123);
 	        int numDigits = ((int) System.Math.Log10(123)) + 1; // ex 0
         }
 
