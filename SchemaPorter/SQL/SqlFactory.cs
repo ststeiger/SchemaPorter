@@ -1,8 +1,9 @@
 ﻿
 namespace SchemaPorter
 {
-    
-    
+
+
+
     public class SqlFactory
     {
         private static string s_cs;
@@ -85,7 +86,36 @@ namespace SchemaPorter
         }
 
 
+
         public static string GetConnectionString()
+        {
+            System.Data.SqlClient.SqlConnectionStringBuilder csb = new System.Data.SqlClient.SqlConnectionStringBuilder();
+
+            string asm = "SchemaPorter";
+
+            csb.DataSource = SchemaPorter.SecretManager.GetSecret<string>("DataSource", asm);
+            csb.InitialCatalog = "COR_Basic_Demo_V4";
+
+            // csb.UserID = SchemaPorter.SecretManager.GetSecret<string>("DefaultDbUser");
+            // csb.Password = SchemaPorter.SecretManager.GetSecret<string>("DefaultDbPassword");
+
+            csb.UserID = SchemaPorter.SecretManager.GetSecret<string>("DefaultDbUser", asm);
+            csb.Password = SchemaPorter.SecretManager.GetSecret<string>("DefaultDbPassword", asm);
+
+            csb.PacketSize = 4096;
+            csb.PersistSecurityInfo = false;
+            csb.ApplicationName = "SchemaPorter";
+            csb.ConnectTimeout = 15;
+            csb.Pooling = true;
+            csb.MinPoolSize = 1;
+            csb.MaxPoolSize = 100;
+            csb.MultipleActiveResultSets = false;
+            csb.WorkstationID = System.Environment.MachineName;
+
+            return csb.ConnectionString;
+        }
+
+            public static string GetBlueMineConnectionStringGetConnectionString()
         {
             System.Data.SqlClient.SqlConnectionStringBuilder csb = 
                 new System.Data.SqlClient.SqlConnectionStringBuilder();

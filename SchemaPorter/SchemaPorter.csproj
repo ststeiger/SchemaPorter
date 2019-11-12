@@ -12,6 +12,10 @@
   <ItemGroup>
     <None Remove="SQL\classes.sql" />
     <None Remove="SQL\columns.sql" />
+    <None Remove="SQL\Data\SELECT_Columns.sql" />
+    <None Remove="SQL\Data\Upsert_Columns.sql" />
+    <None Remove="SQL\Data\Upsert_Example.sql" />
+    <None Remove="SQL\Data\Upsert_Table.sql" />
     <None Remove="SQL\indices.sql" />
     <None Remove="SQL\primary_keys.sql" />
     <None Remove="SQL\Schema\2\GetDataTypeName.sql" />
@@ -34,6 +38,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SQL\columns.sql" />
+    <EmbeddedResource Include="SQL\Data\Upsert_Example.sql" />
+    <EmbeddedResource Include="SQL\Data\SELECT_Columns.sql" />
+    <EmbeddedResource Include="SQL\Data\Upsert_Table.sql" />
+    <EmbeddedResource Include="SQL\Data\Upsert_Columns.sql" />
     <EmbeddedResource Include="SQL\indices.sql" />
     <EmbeddedResource Include="SQL\primary_keys.sql" />
     <EmbeddedResource Include="SQL\Schema\2\GetDataTypeName.sql" />

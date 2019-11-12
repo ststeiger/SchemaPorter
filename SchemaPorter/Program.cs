@@ -795,10 +795,15 @@ ORDER BY
         }
 
 
+
+
         public static void Main(string[] args)
         {
+            TestDapper.Test();
+
+
             // ExecuteProcess();
-            SchemaGeneration();
+            // SchemaGeneration();
 
             System.Console.WriteLine(System.Environment.NewLine);
             System.Console.WriteLine(" --- Press any key to continue --- ");

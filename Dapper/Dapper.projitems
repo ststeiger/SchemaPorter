@@ -54,5 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)WrappedDataReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WrappedReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XmlHandlers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)__Embedded.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)__ScriptSplitter.cs" />
   </ItemGroup>
 </Project>
