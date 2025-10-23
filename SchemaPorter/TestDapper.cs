@@ -160,7 +160,7 @@ INSERT INTO  @" + td.variable_name + @"
 -- SELECT * FROM @" + td.variable_name + @" 
 
 
-MERGE INTO " + table_name + @" AS A 
+MERGE INTO " + table_name + @" WITH (HOLDLOCK) AS A 
 USING @" + td.variable_name + @" AS CTE ON CTE." + lsColumns.AsList()[0].QUOTED_COLUMN_NAME + " = A." + lsColumns.AsList()[0].QUOTED_COLUMN_NAME + @" 
 WHEN MATCHED 
 	THEN UPDATE 
